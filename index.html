@@ -3,16 +3,19 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>PyCoderPad — interview practice</title>
+<title>Wololoop — coding interview practice</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐍</text></svg>">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/material-darker.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/gruvbox-dark.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=EB+Garamond:ital,wght@0,400;0,600;1,400&display=swap">
 <link rel="stylesheet" href="css/app.css">
 </head>
 <body>
 
 <header class="topbar">
-  <div class="brand">Py<span>CoderPad</span></div>
+  <div class="brand">Wolo<span>loop</span></div>
 
   <label class="picker">
     <select id="challenge-picker"></select>
@@ -20,14 +23,22 @@
 
   <div class="spacer"></div>
 
-  <div class="runtime" id="runtime-status" title="Python runtime status">
-    <span class="dot" id="runtime-dot"></span><span id="runtime-text">starting…</span>
+  <div class="resources">
+    <div class="res" title="Parts unlocked">
+      <svg class="res-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.2 14 3.4v4.4c0 3.7-4.3 6.3-6 7-1.7-.7-6-3.3-6-7V3.4z"/></svg><span class="res-value" id="res-parts">1/3</span>
+    </div>
+    <div class="res" title="Tests passing">
+      <svg class="res-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 2.5 10 10M13.5 2.5 6 10M4 14l2.5-2.5M12 14l-2.5-2.5M2 2.5h2v2"/></svg><span class="res-value" id="res-tests">0/0</span>
+    </div>
+    <div class="res clock" id="clock" title="Time remaining">
+      <svg class="res-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 1.6h8M4 14.4h8M4.6 1.6c0 4 3.4 5.6 3.4 6.4 0 .8-3.4 2.4-3.4 6.4M11.4 1.6c0 4-3.4 5.6-3.4 6.4 0 .8 3.4 2.4 3.4 6.4"/></svg><span class="res-value" id="clock-time">--:--</span>
+      <button id="clock-toggle" class="ghost small" title="Start / pause the interview clock">Start</button>
+      <button id="clock-reset" class="ghost small" title="Reset the clock">↺</button>
+    </div>
   </div>
 
-  <div class="clock" id="clock">
-    <span id="clock-time">--:--</span>
-    <button id="clock-toggle" class="ghost" title="Start / pause the interview clock">Start</button>
-    <button id="clock-reset" class="ghost" title="Reset the clock">↺</button>
+  <div class="runtime" id="runtime-status" title="Python runtime status">
+    <span class="dot" id="runtime-dot"></span><span id="runtime-text">starting…</span>
   </div>
 </header>
 
@@ -41,8 +52,8 @@
 
   <section class="pane work">
     <div class="toolbar">
-      <button id="btn-run" class="primary">Run <kbd>⌃↵</kbd></button>
-      <button id="btn-test" class="accent">Run Tests <kbd>⌃⇧↵</kbd></button>
+      <button id="btn-run" class="primary">Run <kbd>Ctrl ↵</kbd></button>
+      <button id="btn-test" class="accent">Run Tests <kbd>Ctrl ⇧ ↵</kbd></button>
       <button id="btn-stop" class="ghost" disabled>Stop</button>
       <div class="spacer"></div>
       <button id="btn-reset" class="ghost" title="Back to the starter file">Reset code</button>

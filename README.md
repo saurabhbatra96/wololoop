@@ -1,13 +1,16 @@
-# PyCoderPad
+# Wololoop
+
+> `while not hired: practice()`
 
 A CoderPad-style practice pad that runs **real Python 3** in your browser, plus
 **10 staged interview problems** built to feel like the real thing: a simple
 problem first, then an interviewer piling on requirements once your first
 solution works.
 
-No server, no build step, no dependencies. It's a folder of static files.
+No server, no build step, no dependencies. It's a folder of static files —
+dressed, for no defensible reason, as an Age of Empires interface.
 
-![Part 1 open on the left, editor and test results on the right](docs/screenshot.png)
+![Parchment problem pane on the left, stone editor and test results on the right](docs/screenshot.png)
 
 ## Run it
 
@@ -27,7 +30,7 @@ files, and browsers block `fetch` on `file://`.)
 2. **Source: Deploy from a branch**
 3. Branch **`main`**, folder **`/ (root)`** → Save
 
-A minute later it's live at `https://<you>.github.io/pycoderpad/`. Nothing else
+A minute later it's live at `https://<you>.github.io/wololoop/`. Nothing else
 to configure — your code, your timer and your progress never leave your browser.
 
 ## How a session works
@@ -107,12 +110,22 @@ because a stage that passes before you've written anything is a broken stage.
   and GitHub Pages can't set headers.
 - Editor is CodeMirror 5 from a CDN, falling back to a plain textarea if it
   can't load.
+- The skin is pure CSS — parchment, timber and gold bevels are all gradients,
+  the resource-bar icons are inline SVG, and the only external assets are two
+  Google fonts. Nothing breaks if they fail to load.
 - Your code, unlocked parts and remaining time are kept in `localStorage`, per
   challenge, per browser.
 
 **First load pulls about 11 MB** of Python runtime from jsDelivr, so it needs a
 network connection once; the browser caches it after that. Everything else is
 served from the repo.
+
+## The name
+
+[Wololo](https://en.wikipedia.org/wiki/Age_of_Empires) is the chant an Age of
+Empires monk makes while converting one of your units to their side. Add a loop
+and you have a coding interview: you walk in as one thing and walk out
+converted, assuming the tests go green.
 
 ## Licence
 

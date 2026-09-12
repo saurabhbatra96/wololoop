@@ -1,6 +1,6 @@
-/* PyCoderPad - interview practice pad. No build step, no framework. */
+/* Wololoop - coding interview practice pad. No build step, no framework. */
 
-const STORE_PREFIX = "pycoderpad:v1:";
+const STORE_PREFIX = "wololoop:v1:";
 const RUN_TIMEOUT_MS = 10000;
 const TEST_TIMEOUT_MS = 25000;
 
@@ -36,7 +36,7 @@ const Editor = {
     }
     this.cm = CodeMirror.fromTextArea(this.textarea, {
       mode: "python",
-      theme: "material-darker",
+      theme: "gruvbox-dark",
       lineNumbers: true,
       indentUnit: 4,
       tabSize: 4,
@@ -208,12 +208,14 @@ function renderTests(result) {
   if (!result) {
     tally.textContent = "";
     tally.className = "tally";
+    updateTests(null);
     host.innerHTML = '<p class="stage-group">Your code or the test file failed to load — see Output.</p>';
     return;
   }
 
   tally.textContent = result.passed + "/" + result.total;
   tally.className = "tally " + (result.passed === result.total ? "good" : "bad");
+  updateTests(result);
 
   const byStage = new Map();
   result.tests.forEach((t) => {
@@ -258,6 +260,22 @@ function renderTests(result) {
 }
 
 /* ------------------------------------------------------------ stage gating */
+
+function updateParts() {
+  const parts = $("res-parts");
+  if (!parts) return;
+  parts.textContent = state.parts.length
+    ? state.unlocked.length + "/" + state.parts.length
+    : "-/-";
+}
+
+
+function updateTests(result) {
+  const tests = $("res-tests");
+  if (!tests) return;
+  tests.textContent = result ? result.passed + "/" + result.total : "0/0";
+}
+
 
 function stageName(n) {
   const stage = (state.meta.stages || []).find((s) => s.n === n);
@@ -332,6 +350,8 @@ function renderStageTabs() {
     };
     nav.appendChild(button);
   });
+
+  updateParts();
 }
 
 function renderProblem() {
@@ -441,7 +461,7 @@ async function loadChallenge(id) {
 
   Editor.set(saved && saved.code ? saved.code : state.starter);
 
-  document.title = state.meta.title + " — PyCoderPad";
+  document.title = state.meta.title + " — Wololoop";
   $("challenge-picker").value = id;
   renderStageTabs();
   renderProblem();

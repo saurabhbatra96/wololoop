@@ -1,4 +1,4 @@
-"""PyCoderPad test harness.
+"""Wololoop test harness.
 
 This is exec'd into the *same* namespace as your solution, so the tests can
 call your functions by name exactly like a single-file CoderPad session.
