@@ -1,0 +1,12 @@
+{
+  "id": "09-incident-alert-correlation",
+  "title": "Incident Alert Correlation",
+  "domain": "SRE / observability",
+  "minutes": 45,
+  "skills": ["windowed aggregation", "hysteresis state machine", "graph components", "BFS"],
+  "stages": [
+    {"n": 1, "name": "Error rate per minute", "minutes": 12},
+    {"n": 2, "name": "Burst detection without flapping", "minutes": 18},
+    {"n": 3, "name": "From alerts to incidents", "minutes": 15}
+  ]
+}

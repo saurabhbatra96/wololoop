@@ -1,0 +1,124 @@
+{
+  "challenges": [
+    {
+      "id": "01-trade-settlement-netting",
+      "title": "Trade Settlement Netting",
+      "domain": "Capital markets",
+      "minutes": 45,
+      "skills": [
+        "hash aggregation",
+        "greedy matching",
+        "integer money",
+        "date arithmetic"
+      ]
+    },
+    {
+      "id": "02-order-matching-engine",
+      "title": "Order Matching Engine",
+      "domain": "Exchange / trading",
+      "minutes": 45,
+      "skills": [
+        "heaps",
+        "price-time priority",
+        "lazy deletion",
+        "invariants"
+      ]
+    },
+    {
+      "id": "03-payments-rate-limiter",
+      "title": "Payments API Rate Limiter",
+      "domain": "Fintech infrastructure",
+      "minutes": 40,
+      "skills": [
+        "deques",
+        "windowing",
+        "token bucket",
+        "boundary math"
+      ]
+    },
+    {
+      "id": "04-crm-lead-dedupe",
+      "title": "CRM Lead Deduplication",
+      "domain": "CRM / entity resolution",
+      "minutes": 45,
+      "skills": [
+        "normalisation",
+        "union-find",
+        "transitive linking",
+        "merge precedence"
+      ]
+    },
+    {
+      "id": "05-consulting-utilization",
+      "title": "Consulting Utilisation and Staffing",
+      "domain": "Professional services",
+      "minutes": 45,
+      "skills": [
+        "date bucketing",
+        "interval sweep",
+        "constrained greedy",
+        "tie-break rules"
+      ]
+    },
+    {
+      "id": "06-saas-billing-proration",
+      "title": "SaaS Billing and Proration",
+      "domain": "SaaS / billing",
+      "minutes": 45,
+      "skills": [
+        "integer money",
+        "Decimal rounding",
+        "interval segmentation",
+        "event replay"
+      ]
+    },
+    {
+      "id": "07-clickstream-sessionization",
+      "title": "Clickstream Sessionisation",
+      "domain": "Product analytics",
+      "minutes": 40,
+      "skills": [
+        "sorting and grouping",
+        "gap scan",
+        "two-pointer matching",
+        "heaps"
+      ]
+    },
+    {
+      "id": "08-inventory-allocation",
+      "title": "Inventory Allocation",
+      "domain": "Retail supply chain",
+      "minutes": 45,
+      "skills": [
+        "greedy allocation",
+        "total orderings",
+        "lazy expiry",
+        "stateful invariants"
+      ]
+    },
+    {
+      "id": "09-incident-alert-correlation",
+      "title": "Incident Alert Correlation",
+      "domain": "SRE / observability",
+      "minutes": 45,
+      "skills": [
+        "windowed aggregation",
+        "hysteresis state machine",
+        "graph components",
+        "BFS"
+      ]
+    },
+    {
+      "id": "10-claims-adjudication",
+      "title": "Health Claims Adjudication",
+      "domain": "Health insurance",
+      "minutes": 45,
+      "skills": [
+        "ordered accumulation",
+        "multi-level caps",
+        "integer money",
+        "recompute and diff"
+      ]
+    }
+  ]
+}

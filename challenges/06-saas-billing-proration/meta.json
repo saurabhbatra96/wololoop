@@ -1,0 +1,12 @@
+{
+  "id": "06-saas-billing-proration",
+  "title": "SaaS Billing and Proration",
+  "domain": "SaaS / billing",
+  "minutes": 45,
+  "skills": ["integer money", "Decimal rounding", "interval segmentation", "event replay"],
+  "stages": [
+    {"n": 1, "name": "Whole-period invoice", "minutes": 10},
+    {"n": 2, "name": "Mid-cycle proration", "minutes": 18},
+    {"n": 3, "name": "Replaying the event log", "minutes": 17}
+  ]
+}

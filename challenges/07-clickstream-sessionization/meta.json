@@ -1,0 +1,12 @@
+{
+  "id": "07-clickstream-sessionization",
+  "title": "Clickstream Sessionisation",
+  "domain": "Product analytics",
+  "minutes": 40,
+  "skills": ["sorting and grouping", "gap scan", "two-pointer matching", "heaps"],
+  "stages": [
+    {"n": 1, "name": "Split into sessions", "minutes": 13},
+    {"n": 2, "name": "Funnel conversion", "minutes": 14},
+    {"n": 3, "name": "Top pages by reach", "minutes": 13}
+  ]
+}

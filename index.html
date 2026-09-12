@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PyCoderPad — interview practice</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐍</text></svg>">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/material-darker.min.css">
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">Py<span>CoderPad</span></div>
+
+  <label class="picker">
+    <select id="challenge-picker"></select>
+  </label>
+
+  <div class="spacer"></div>
+
+  <div class="runtime" id="runtime-status" title="Python runtime status">
+    <span class="dot" id="runtime-dot"></span><span id="runtime-text">starting…</span>
+  </div>
+
+  <div class="clock" id="clock">
+    <span id="clock-time">--:--</span>
+    <button id="clock-toggle" class="ghost" title="Start / pause the interview clock">Start</button>
+    <button id="clock-reset" class="ghost" title="Reset the clock">↺</button>
+  </div>
+</header>
+
+<main id="layout">
+  <section class="pane problem">
+    <nav class="stage-tabs" id="stage-tabs"></nav>
+    <div class="problem-body" id="problem-body"></div>
+  </section>
+
+  <div class="gutter" id="gutter" title="Drag to resize"></div>
+
+  <section class="pane work">
+    <div class="toolbar">
+      <button id="btn-run" class="primary">Run <kbd>⌃↵</kbd></button>
+      <button id="btn-test" class="accent">Run Tests <kbd>⌃⇧↵</kbd></button>
+      <button id="btn-stop" class="ghost" disabled>Stop</button>
+      <div class="spacer"></div>
+      <button id="btn-reset" class="ghost" title="Back to the starter file">Reset code</button>
+      <button id="btn-solution" class="ghost" title="Show the reference solution">Solution</button>
+    </div>
+
+    <div class="editor-host" id="editor-host">
+      <textarea id="editor" spellcheck="false"></textarea>
+    </div>
+
+    <div class="results-pane">
+      <nav class="out-tabs">
+        <button data-out="console" class="active">Output</button>
+        <button data-out="tests">Tests <span class="tally" id="tally"></span></button>
+        <div class="spacer"></div>
+        <button id="btn-clear" class="ghost small">Clear</button>
+      </nav>
+      <pre class="console" id="console"></pre>
+      <div class="tests hidden" id="tests"></div>
+    </div>
+  </section>
+</main>
+
+<div class="toast hidden" id="toast"></div>
+
+<dialog id="solution-modal">
+  <div class="modal-head">
+    <strong>Reference solution</strong>
+    <button id="close-solution" class="ghost">Close</button>
+  </div>
+  <p class="warn">Once you've read this you can't un-read it. Try the part first — even a bad attempt is worth more than a clean read.</p>
+  <pre class="code" id="solution-body"></pre>
+</dialog>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/python/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/matchbrackets.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closebrackets.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/selection/active-line.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/comment/comment.min.js"></script>
+<script src="js/md.js"></script>
+<script src="js/runner.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

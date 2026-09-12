@@ -1,0 +1,12 @@
+{
+  "id": "05-consulting-utilization",
+  "title": "Consulting Utilisation and Staffing",
+  "domain": "Professional services",
+  "minutes": 45,
+  "skills": ["date bucketing", "interval sweep", "constrained greedy", "tie-break rules"],
+  "stages": [
+    {"n": 1, "name": "Weekly utilisation", "minutes": 13},
+    {"n": 2, "name": "Double bookings", "minutes": 14},
+    {"n": 3, "name": "Staffing the bench", "minutes": 18}
+  ]
+}

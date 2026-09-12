@@ -1,0 +1,12 @@
+{
+  "id": "10-claims-adjudication",
+  "title": "Health Claims Adjudication",
+  "domain": "Health insurance",
+  "minutes": 45,
+  "skills": ["ordered accumulation", "multi-level caps", "integer money", "recompute and diff"],
+  "stages": [
+    {"n": 1, "name": "Deductible and coinsurance", "minutes": 13},
+    {"n": 2, "name": "Out-of-pocket maximums", "minutes": 17},
+    {"n": 3, "name": "Late claims and reversals", "minutes": 15}
+  ]
+}

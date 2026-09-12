@@ -1,0 +1,12 @@
+{
+  "id": "08-inventory-allocation",
+  "title": "Inventory Allocation",
+  "domain": "Retail supply chain",
+  "minutes": 45,
+  "skills": ["greedy allocation", "total orderings", "lazy expiry", "stateful invariants"],
+  "stages": [
+    {"n": 1, "name": "FEFO allocation", "minutes": 14},
+    {"n": 2, "name": "Multi-warehouse", "minutes": 17},
+    {"n": 3, "name": "Reservations with TTL", "minutes": 14}
+  ]
+}

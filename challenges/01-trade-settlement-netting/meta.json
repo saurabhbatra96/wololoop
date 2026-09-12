@@ -1,0 +1,12 @@
+{
+  "id": "01-trade-settlement-netting",
+  "title": "Trade Settlement Netting",
+  "domain": "Capital markets",
+  "minutes": 45,
+  "skills": ["hash aggregation", "greedy matching", "integer money", "date arithmetic"],
+  "stages": [
+    {"n": 1, "name": "Net positions", "minutes": 12},
+    {"n": 2, "name": "Cash netting", "minutes": 18},
+    {"n": 3, "name": "FX and settlement dates", "minutes": 15}
+  ]
+}

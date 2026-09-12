@@ -1,0 +1,12 @@
+{
+  "id": "04-crm-lead-dedupe",
+  "title": "CRM Lead Deduplication",
+  "domain": "CRM / entity resolution",
+  "minutes": 45,
+  "skills": ["normalisation", "union-find", "transitive linking", "merge precedence"],
+  "stages": [
+    {"n": 1, "name": "Normalise and group", "minutes": 14},
+    {"n": 2, "name": "Transitive clusters", "minutes": 16},
+    {"n": 3, "name": "Golden records", "minutes": 15}
+  ]
+}

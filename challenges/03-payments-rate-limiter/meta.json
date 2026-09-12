@@ -1,0 +1,12 @@
+{
+  "id": "03-payments-rate-limiter",
+  "title": "Payments API Rate Limiter",
+  "domain": "Fintech infrastructure",
+  "minutes": 40,
+  "skills": ["deques", "windowing", "token bucket", "boundary math"],
+  "stages": [
+    {"n": 1, "name": "Fixed window", "minutes": 10},
+    {"n": 2, "name": "Sliding window", "minutes": 15},
+    {"n": 3, "name": "Token bucket and tiers", "minutes": 15}
+  ]
+}
