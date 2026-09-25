@@ -1,0 +1,13 @@
+{
+  "id": "14-granola-api-versioning",
+  "title": "Evolving the Notes API",
+  "domain": "Granola API / versioning",
+  "language": "typescript",
+  "minutes": 45,
+  "skills": ["version pinning", "immutable transforms", "recursive schema diff", "variance", "semver"],
+  "stages": [
+    {"n": 1, "name": "Old clients, new server", "minutes": 15},
+    {"n": 2, "name": "What counts as breaking?", "minutes": 16},
+    {"n": 3, "name": "Requests flip the rules", "minutes": 14}
+  ]
+}

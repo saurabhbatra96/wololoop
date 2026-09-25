@@ -1,0 +1,13 @@
+{
+  "id": "13-granola-typed-endpoints",
+  "title": "Typed Endpoints for the Notes API",
+  "domain": "Granola API / server design",
+  "language": "typescript",
+  "minutes": 45,
+  "skills": ["input validation", "Result types", "conditional & mapped types", "const generics", "template literal types", "routing"],
+  "stages": [
+    {"n": 1, "name": "Guarding the front door", "minutes": 12},
+    {"n": 2, "name": "Schemas that know their types", "minutes": 16},
+    {"n": 3, "name": "Routes that know their params", "minutes": 17}
+  ]
+}

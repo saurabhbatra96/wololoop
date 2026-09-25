@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 """Run every challenge's reference solution against its tests, headlessly.
 
+Python challenges run here; TypeScript ones (meta.json "language":
+"typescript") are handed to tools/verify_ts.mjs, which needs Node 20+.
+
 This is the same harness the browser uses, so a green run here means the pad
 will be green too. It also checks that each starter.py *fails*, because a stage
 that passes before you write anything is a broken stage.
@@ -9,7 +12,10 @@ that passes before you write anything is a broken stage.
     python3 tools/verify.py 01 03      # just these
 """
 
+import json
 import pathlib
+import shutil
+import subprocess
 import sys
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
@@ -66,14 +72,29 @@ def verify(challenge):
 
 def main():
     wanted = sys.argv[1:]
-    challenges = sorted(p for p in (ROOT / "challenges").iterdir() if (p / "tests.py").exists())
+    challenges = sorted(p for p in (ROOT / "challenges").iterdir()
+                        if (p / "tests.py").exists() or (p / "tests.ts").exists())
     if wanted:
         challenges = [c for c in challenges if any(c.name.startswith(w) for w in wanted)]
     if not challenges:
         print("no challenges matched")
         return 1
 
-    ok = all([verify(c) for c in challenges])
+    def language(c):
+        return json.loads((c / "meta.json").read_text()).get("language", "python")
+
+    python = [c for c in challenges if language(c) == "python"]
+    typescript = [c for c in challenges if language(c) == "typescript"]
+
+    ok = all([verify(c) for c in python])
+    if typescript:
+        if not shutil.which("node"):
+            print("%s%d TypeScript challenge(s) skipped: node not found%s" % (RED, len(typescript), RESET))
+            ok = False
+        else:
+            sys.stdout.flush()
+            cmd = ["node", str(ROOT / "tools" / "verify_ts.mjs")] + [str(c) for c in typescript]
+            ok = subprocess.run(cmd).returncode == 0 and ok
     print()
     print(("%sall %d green%s" % (GREEN, len(challenges), RESET)) if ok
           else ("%ssome challenges failed%s" % (RED, RESET)))

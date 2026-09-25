@@ -17,6 +17,7 @@ def main():
                 "id": meta_path.parent.name,
                 "title": meta["title"],
                 "domain": meta["domain"],
+                "language": meta.get("language", "python"),
                 "minutes": meta["minutes"],
                 "skills": meta.get("skills", []),
             }

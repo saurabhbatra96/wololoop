@@ -1,0 +1,13 @@
+{
+  "id": "12-granola-webhook-receiver",
+  "title": "Granola Webhook Receiver",
+  "domain": "Granola API / webhooks",
+  "language": "typescript",
+  "minutes": 45,
+  "skills": ["HMAC verification", "discriminated unions", "mapped generics", "idempotency", "promise coalescing"],
+  "stages": [
+    {"n": 1, "name": "Is this really from Granola?", "minutes": 13},
+    {"n": 2, "name": "Typed handlers, exactly once", "minutes": 15},
+    {"n": 3, "name": "Fetch once, however loud", "minutes": 17}
+  ]
+}

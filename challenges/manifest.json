@@ -4,6 +4,7 @@
       "id": "01-trade-settlement-netting",
       "title": "Trade Settlement Netting",
       "domain": "Capital markets",
+      "language": "python",
       "minutes": 45,
       "skills": [
         "hash aggregation",
@@ -16,6 +17,7 @@
       "id": "02-order-matching-engine",
       "title": "Order Matching Engine",
       "domain": "Exchange / trading",
+      "language": "python",
       "minutes": 45,
       "skills": [
         "heaps",
@@ -28,6 +30,7 @@
       "id": "03-payments-rate-limiter",
       "title": "Payments API Rate Limiter",
       "domain": "Fintech infrastructure",
+      "language": "python",
       "minutes": 40,
       "skills": [
         "deques",
@@ -40,6 +43,7 @@
       "id": "04-crm-lead-dedupe",
       "title": "CRM Lead Deduplication",
       "domain": "CRM / entity resolution",
+      "language": "python",
       "minutes": 45,
       "skills": [
         "normalisation",
@@ -52,6 +56,7 @@
       "id": "05-consulting-utilization",
       "title": "Consulting Utilisation and Staffing",
       "domain": "Professional services",
+      "language": "python",
       "minutes": 45,
       "skills": [
         "date bucketing",
@@ -64,6 +69,7 @@
       "id": "06-saas-billing-proration",
       "title": "SaaS Billing and Proration",
       "domain": "SaaS / billing",
+      "language": "python",
       "minutes": 45,
       "skills": [
         "integer money",
@@ -76,6 +82,7 @@
       "id": "07-clickstream-sessionization",
       "title": "Clickstream Sessionisation",
       "domain": "Product analytics",
+      "language": "python",
       "minutes": 40,
       "skills": [
         "sorting and grouping",
@@ -88,6 +95,7 @@
       "id": "08-inventory-allocation",
       "title": "Inventory Allocation",
       "domain": "Retail supply chain",
+      "language": "python",
       "minutes": 45,
       "skills": [
         "greedy allocation",
@@ -100,6 +108,7 @@
       "id": "09-incident-alert-correlation",
       "title": "Incident Alert Correlation",
       "domain": "SRE / observability",
+      "language": "python",
       "minutes": 45,
       "skills": [
         "windowed aggregation",
@@ -112,12 +121,71 @@
       "id": "10-claims-adjudication",
       "title": "Health Claims Adjudication",
       "domain": "Health insurance",
+      "language": "python",
       "minutes": 45,
       "skills": [
         "ordered accumulation",
         "multi-level caps",
         "integer money",
         "recompute and diff"
+      ]
+    },
+    {
+      "id": "11-granola-notes-client",
+      "title": "Granola Notes API Client",
+      "domain": "Granola API / client SDK",
+      "language": "typescript",
+      "minutes": 45,
+      "skills": [
+        "async iterators",
+        "cursor pagination",
+        "retry policy",
+        "typed errors",
+        "overloads",
+        "bounded concurrency"
+      ]
+    },
+    {
+      "id": "12-granola-webhook-receiver",
+      "title": "Granola Webhook Receiver",
+      "domain": "Granola API / webhooks",
+      "language": "typescript",
+      "minutes": 45,
+      "skills": [
+        "HMAC verification",
+        "discriminated unions",
+        "mapped generics",
+        "idempotency",
+        "promise coalescing"
+      ]
+    },
+    {
+      "id": "13-granola-typed-endpoints",
+      "title": "Typed Endpoints for the Notes API",
+      "domain": "Granola API / server design",
+      "language": "typescript",
+      "minutes": 45,
+      "skills": [
+        "input validation",
+        "Result types",
+        "conditional & mapped types",
+        "const generics",
+        "template literal types",
+        "routing"
+      ]
+    },
+    {
+      "id": "14-granola-api-versioning",
+      "title": "Evolving the Notes API",
+      "domain": "Granola API / versioning",
+      "language": "typescript",
+      "minutes": 45,
+      "skills": [
+        "version pinning",
+        "immutable transforms",
+        "recursive schema diff",
+        "variance",
+        "semver"
       ]
     }
   ]

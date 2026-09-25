@@ -14,6 +14,7 @@ const state = {
   tests: "",
   harness: "",
   starter: "",
+  lang: "python",
   unlocked: [1],
   passed: [],
   viewing: 1,
@@ -24,9 +25,22 @@ const state = {
 
 /* ------------------------------------------------------------------ editor */
 
+const LANGS = {
+  python: { ext: "py", label: "Python", harness: "runtime/harness.py", indent: 4, mode: "python" },
+  typescript: { ext: "ts", label: "TypeScript", harness: "runtime/harness.ts", indent: 2,
+                mode: { name: "javascript", typescript: true } },
+};
+
 const Editor = {
   cm: null,
   textarea: null,
+
+  setLanguage(lang) {
+    if (!this.cm) return;
+    this.cm.setOption("mode", lang.mode);
+    this.cm.setOption("indentUnit", lang.indent);
+    this.cm.setOption("tabSize", lang.indent);
+  },
 
   init() {
     this.textarea = $("editor");
@@ -119,10 +133,32 @@ function loadSession(id) {
 
 /* ------------------------------------------------------------------ runner */
 
-const runner = new PyRunner({
-  onStdout: (text, isError) => appendConsole(text, isError ? "err" : ""),
-  onStatus: (text) => setRuntime(text, /ready/i.test(text) ? "ready" : "busy"),
-});
+/* One runner per language, booted the first time a challenge needs it. Each
+ * remembers its last status so switching languages repaints the right one. */
+const runners = {};
+const lastStatus = {};
+
+function runnerFor(lang) {
+  if (!runners[lang]) {
+    const Runner = lang === "typescript" ? TsRunner : PyRunner;
+    runners[lang] = new Runner({
+      onStdout: (text, isError) => appendConsole(text, isError ? "err" : ""),
+      onStatus: (text) => {
+        lastStatus[lang] = text;
+        if (state.lang === lang) setRuntime(text, /ready/i.test(text) ? "ready" : "busy");
+      },
+    });
+  }
+  return runners[lang];
+}
+
+const runner = () => runnerFor(state.lang);
+
+async function harnessFor(lang) {
+  if (!harnessFor.cache[lang]) harnessFor.cache[lang] = await fetchText(LANGS[lang].harness);
+  return harnessFor.cache[lang];
+}
+harnessFor.cache = {};
 
 function setRuntime(text, cls) {
   $("runtime-text").textContent = text;
@@ -165,13 +201,14 @@ async function execute(mode) {
   const started = performance.now();
   const payload = {
     code: Editor.get(),
-    harness: mode === "test" ? state.harness : "",
+    // the TS harness also declares main(), so your file needs it even to Run
+    harness: mode === "test" || state.lang === "typescript" ? state.harness : "",
     tests: mode === "test" ? state.tests : "",
     stages: mode === "test" ? state.unlocked : null,
     mode,
   };
 
-  const result = await runner.exec(payload, mode === "run" ? RUN_TIMEOUT_MS : TEST_TIMEOUT_MS);
+  const result = await runner().exec(payload, mode === "run" ? RUN_TIMEOUT_MS : TEST_TIMEOUT_MS);
   const elapsed = Math.round(performance.now() - started);
 
   setBusy(false);
@@ -437,15 +474,24 @@ async function fetchText(path) {
 async function loadChallenge(id) {
   pauseClock();
   const base = "challenges/" + id + "/";
-  const [metaRaw, partsRaw, starter, tests] = await Promise.all([
-    fetchText(base + "meta.json"),
+  const meta = JSON.parse(await fetchText(base + "meta.json"));
+  const lang = LANGS[meta.language] ? meta.language : "python";
+  const ext = LANGS[lang].ext;
+  const [partsRaw, starter, tests, harness] = await Promise.all([
     fetchText(base + "parts.md"),
-    fetchText(base + "starter.py"),
-    fetchText(base + "tests.py"),
+    fetchText(base + "starter." + ext),
+    fetchText(base + "tests." + ext),
+    harnessFor(lang),
   ]);
 
   state.id = id;
-  state.meta = JSON.parse(metaRaw);
+  state.meta = meta;
+  state.lang = lang;
+  state.harness = harness;
+  Editor.setLanguage(LANGS[lang]);
+  setRuntime(lastStatus[lang] || "booting " + LANGS[lang].label + "…",
+             /ready/i.test(lastStatus[lang] || "") ? "ready" : "busy");
+  runner().init();
   state.parts = partsRaw.split(/\n<!--\s*part\s*-->\n/).map((p) => p.trim()).filter(Boolean);
   state.starter = starter;
   state.tests = tests;
@@ -470,7 +516,7 @@ async function loadChallenge(id) {
   clearConsole();
   showOut("console");
   appendConsole(
-    state.meta.title + " · " + state.meta.domain + " · budget " + state.meta.minutes +
+    state.meta.title + " · " + state.meta.domain + " · " + LANGS[lang].label + " · budget " + state.meta.minutes +
       " min\nRun (Ctrl+Enter) executes your file. Run Tests (Ctrl+Shift+Enter) checks the parts you've unlocked.\n",
     "meta"
   );
@@ -485,11 +531,18 @@ async function loadManifest() {
 
   const picker = $("challenge-picker");
   picker.textContent = "";
-  state.manifest.forEach((entry) => {
-    const option = document.createElement("option");
-    option.value = entry.id;
-    option.textContent = entry.id.slice(0, 2) + " · " + entry.title + "  (" + entry.domain + ", " + entry.minutes + "m)";
-    picker.appendChild(option);
+  Object.keys(LANGS).forEach((lang) => {
+    const entries = state.manifest.filter((c) => (c.language || "python") === lang);
+    if (!entries.length) return;
+    const group = document.createElement("optgroup");
+    group.label = LANGS[lang].label;
+    entries.forEach((entry) => {
+      const option = document.createElement("option");
+      option.value = entry.id;
+      option.textContent = entry.id.slice(0, 2) + " · " + entry.title + "  (" + entry.domain + ", " + entry.minutes + "m)";
+      group.appendChild(option);
+    });
+    picker.appendChild(group);
   });
 
   let start = null;
@@ -508,7 +561,7 @@ function wire() {
   $("btn-run").onclick = runCode;
   $("btn-test").onclick = runTests;
   $("btn-stop").onclick = () => {
-    runner.kill();
+    runner().kill();
     setBusy(false);
     appendConsole("\n[stopped]\n", "err");
   };
@@ -522,7 +575,7 @@ function wire() {
   };
 
   $("btn-solution").onclick = async () => {
-    const source = await fetchText("challenges/" + state.id + "/solution.py");
+    const source = await fetchText("challenges/" + state.id + "/solution." + LANGS[state.lang].ext);
     $("solution-body").textContent = source;
     state.revealed = true;
     saveSession();
@@ -570,10 +623,9 @@ function wire() {
 async function main() {
   Editor.init();
   wire();
-  setRuntime("booting Python…", "busy");
+  setRuntime("loading…", "busy");
 
   try {
-    state.harness = await fetchText("runtime/harness.py");
     await loadManifest();
   } catch (err) {
     setRuntime("failed to load: " + err.message, "error");
@@ -585,8 +637,6 @@ async function main() {
     );
     return;
   }
-
-  runner.init();
 }
 
 main();

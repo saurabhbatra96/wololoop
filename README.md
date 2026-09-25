@@ -2,10 +2,10 @@
 
 > `while not hired: practice()`
 
-A CoderPad-style practice pad that runs **real Python 3** in your browser, plus
-**10 staged interview problems** built to feel like the real thing: a simple
-problem first, then an interviewer piling on requirements once your first
-solution works.
+A CoderPad-style practice pad that runs **real Python 3** and **strict
+TypeScript** in your browser, plus **14 staged interview problems** built to
+feel like the real thing: a simple problem first, then an interviewer piling on
+requirements once your first solution works.
 
 No server, no build step, no dependencies. It's a folder of static files —
 dressed, for no defensible reason, as an Age of Empires interface.
@@ -54,6 +54,8 @@ to make the same judgement call you'd make in the room.
 
 ## The problems
 
+### Python
+
 Each is 30–45 minutes, three parts, all stdlib. Between them they cover heaps,
 union-find, graphs, interval sweeps, sliding windows, greedy assignment,
 integer-money discipline and event replay — no two have the same shape of
@@ -72,13 +74,32 @@ answer.
 | 09 | Incident Alert Correlation | SRE / observability | Error rates → burst detection with hysteresis → alerts into incidents |
 | 10 | Health Claims Adjudication | Health insurance | Deductible and coinsurance → out-of-pocket maximums → late claims and reversals |
 
+### TypeScript: API design, built on Granola's public API
+
+Four problems about designing and consuming APIs, using the endpoints,
+shapes, webhook signing and changelog from [Granola's public API
+docs](https://docs.granola.ai/introduction). Where a problem goes past what
+Granola actually does (version pinning in 14), the problem says so.
+
+Here the **types are tested too**. Tests use `// @ts-expect-error` to check
+that your API *rejects* misuse: if your types let something through that they
+shouldn't, the test goes red even when every runtime value is right. Your own
+file must also type-check under `strict`.
+
+| # | Problem | The arc |
+|---|---------|---------|
+| 11 | Granola Notes API Client | Lazy cursor pagination as an `AsyncIterable` → retries with backoff, `retry-after` and a typed error union → overloads for `include=transcript`, the 413 fallback, bounded-concurrency bulk fetch |
+| 12 | Granola Webhook Receiver | Standard Webhooks HMAC verification with replay window → a router whose handlers are narrowed per event type, with exactly-once handling under concurrent retries → a latest-wins fetch coalescer |
+| 13 | Typed Endpoints for the Notes API | Validating List Notes' real query params → a Zod-sized schema library with inferred types → a router with path params inferred from the route string |
+| 14 | Evolving the Notes API | Version pinning with downgrades built from the real changelog → a breaking-change detector for response schemas → request schemas, where variance flips the rules, and semver bumps |
+
 ## Adding your own
 
 One directory per challenge under `challenges/`:
 
 ```
-challenges/11-your-problem/
-    meta.json     title, domain, minutes, stage names
+challenges/15-your-problem/
+    meta.json     title, domain, minutes, stage names, "language" ("python" if absent)
     parts.md      the three parts, separated by a line containing <!-- part -->
     starter.py    stubs that raise NotImplementedError
     tests.py      @stage(n)-tagged tests
@@ -89,6 +110,21 @@ Tests run in the **same namespace** as the candidate's code, so they call
 functions by name with no imports. `@stage(n)`, `assert_eq` and `assert_close`
 come from `runtime/harness.py` for free.
 
+For a TypeScript problem, set `"language": "typescript"` and use `.ts` files.
+None of the three files are modules (no `import`/`export`), so they share one
+global scope just like the Python version. `runtime/harness.ts` gives you
+`test(n, name, fn)` (fn may be async), `assertEqual` (deep), `assertThrows`,
+`assertRejects`, `assert`, `NotImplementedError` for stubs, and `main(fn)` for
+code that should run on **Run** but not under **Run Tests**. Two rules for
+`tests.ts`:
+
+- A type error inside a `test(...)` call fails only that test, which is what
+  makes `// @ts-expect-error` a real assertion.
+- Anything **outside** a `test(...)` call must compile against the bare
+  starter, or Part 1 can never go green. If a helper needs a later part's
+  types, tag it with a `/** @stage n */` doc comment and its type errors count
+  against Part n only. `verify.py` checks for this.
+
 Then:
 
 ```bash
@@ -97,13 +133,22 @@ python3 tools/verify.py          # every solution green, every starter red
 ```
 
 `verify.py` runs the same harness the browser does, without a browser — so
-green here means green in the pad. It also checks each `starter.py` **fails**,
+green here means green in the pad. It also checks each starter **fails**,
 because a stage that passes before you've written anything is a broken stage.
+TypeScript challenges need Node 20+; the first run installs the pinned
+compiler into `tools/.cache` (gitignored).
 
 ## How it works
 
 - **Pyodide 0.28.3** (CPython 3.13.2 compiled to WebAssembly), pinned in one
   constant at the top of `js/pyworker.js`.
+- **TypeScript 6.0.3**, the last release of the compiler written in
+  TypeScript (7.x is the native Go port and can't run in a browser), loaded
+  from jsDelivr into its own long-lived worker. It type-checks with `strict`
+  and transpiles; `runtime/tscompile.js` is shared with the headless verifier.
+  Each run gets a **fresh worker**, so every run starts with a clean global
+  scope and Stop is just "terminate it". Stack traces are mapped back to your
+  `.ts` line numbers.
 - Python runs in a **Web Worker**, so an infinite loop can't freeze the page —
   Stop terminates the worker and a fresh one takes its place. There's no
   interrupt buffer because `SharedArrayBuffer` needs COOP/COEP response headers,
@@ -116,9 +161,10 @@ because a stage that passes before you've written anything is a broken stage.
 - Your code, unlocked parts and remaining time are kept in `localStorage`, per
   challenge, per browser.
 
-**First load pulls about 11 MB** of Python runtime from jsDelivr, so it needs a
-network connection once; the browser caches it after that. Everything else is
-served from the repo.
+**First load pulls about 11 MB** of Python runtime (or about 9 MB of TypeScript
+compiler, the first time you open a TypeScript problem) from jsDelivr, so it
+needs a network connection once; the browser caches it after that. Everything
+else is served from the repo.
 
 ## The name
 
