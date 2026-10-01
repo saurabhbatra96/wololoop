@@ -31,30 +31,58 @@ process.on("unhandledRejection", (err) => {
   console.error(DIM + "unhandled rejection: " + TsCompile.cleanStack(err, {}).split("\n")[0] + RESET);
 });
 
-function loadTypeScript() {
-  const pkg = path.join(CACHE, "node_modules", "typescript", "package.json");
-  const installed = fs.existsSync(pkg) && JSON.parse(fs.readFileSync(pkg, "utf8")).version;
-  if (installed !== TsCompile.TS_VERSION) {
-    console.error(DIM + "installing typescript@" + TsCompile.TS_VERSION + " into tools/.cache" + RESET);
-    execFileSync("npm", ["install", "--silent", "--no-save", "--prefix", CACHE, "typescript@" + TsCompile.TS_VERSION],
-                 { stdio: "inherit" });
-  }
-  return createRequire(pkg)("typescript");
+const MODULES = path.join(CACHE, "node_modules");
+
+/* Everything the verifier needs, pinned to what the browser loads. Installed together, because
+ * `npm install --no-save` prunes whatever isn't named in the same command. */
+const DEV_DEPS = [
+  ["typescript", TsCompile.TS_VERSION],
+  ["react", TsCompile.REACT_VERSION],
+  ["react-dom", TsCompile.REACT_VERSION],
+  ["jsdom", "26.1.0"],
+  ...TsCompile.REACT_TYPES.map(([pkg, version]) => [pkg, version]),
+];
+
+function ensureDeps() {
+  const installedVersion = (pkg) => {
+    const file = path.join(MODULES, pkg, "package.json");
+    return fs.existsSync(file) && JSON.parse(fs.readFileSync(file, "utf8")).version;
+  };
+  if (DEV_DEPS.every(([pkg, version]) => installedVersion(pkg) === version)) return;
+  console.error(DIM + "installing the pinned compiler, React and jsdom into tools/.cache" + RESET);
+  execFileSync("npm", ["install", "--silent", "--no-save", "--prefix", CACHE,
+                       ...DEV_DEPS.map(([pkg, version]) => pkg + "@" + version)], { stdio: "inherit" });
 }
 
 const read = (...parts) => fs.readFileSync(path.join(...parts), "utf8");
+const requireDep = (pkg) => createRequire(path.join(MODULES, pkg, "package.json"))(pkg);
 
+/* { script, react }: one compiler per challenge kind, created on first use. */
 export async function makeCompiler() {
-  const ts = loadTypeScript();
-  const libDir = path.join(CACHE, "node_modules", "typescript", "lib");
+  ensureDeps();
+  const ts = requireDep("typescript");
+  const libDir = path.join(MODULES, "typescript", "lib");
   const libs = await TsCompile.loadLibs(async (name) => read(libDir, name));
-  return TsCompile.createCompiler(ts, libs, read(ROOT, "runtime", "ambient.d.ts"));
+  const compilers = { script: TsCompile.createCompiler(ts, libs, read(ROOT, "runtime", "ambient.d.ts")) };
+  compilers.reactCompiler = async () => {
+    if (!compilers.react) {
+      await TsCompile.loadLibs(async (name) => read(libDir, name), TsCompile.REACT_LIBS, libs);
+      const types = await TsCompile.loadReactTypes(async (pkg, version, name) => read(MODULES, pkg, name));
+      compilers.react = TsCompile.createCompiler(ts, libs, "", { types });
+    }
+    return compilers.react;
+  };
+  return compilers;
 }
 
-/* Compile, run in a fresh vm context, fold type errors in. Mirrors TsRunner.exec. */
-export async function runCase(compiler, { code, tests, stages = null, mode = "test" }) {
-  const harness = read(ROOT, "runtime", "harness.ts");
+/* Compile, run, fold type errors in. Mirrors TsRunner.exec: a vm context for plain TypeScript,
+ * a jsdom window running runtime/reactframe.js for React. */
+export async function runCase(compilers, { code, tests, stages = null, mode = "test", react = false }) {
+  let harness = read(ROOT, "runtime", "harness.ts");
+  if (react) harness += "\n" + read(ROOT, "runtime", "harness-react.ts");
+  const compiler = react ? await compilers.reactCompiler() : compilers.script;
   const compiled = compiler.compile({ code, harness, tests: mode === "test" ? tests : "" });
+  if (react) return runInJsdom(compiled, { stages, mode });
   const stdout = [];
   const sink = (...args) => stdout.push(args.map(String).join(" "));
   const context = vm.createContext({
@@ -80,12 +108,42 @@ export async function runCase(compiler, { code, tests, stages = null, mode = "te
   return { ok: true, result, compiled, stdout };
 }
 
-async function verify(compiler, dir) {
+let reactScripts = null;
+
+async function runInJsdom(compiled, { stages, mode }) {
+  const { JSDOM, VirtualConsole } = requireDep("jsdom");
+  reactScripts ??= [
+    read(MODULES, "react", "umd", "react.development.js"),
+    read(MODULES, "react-dom", "umd", "react-dom.development.js"),
+    read(ROOT, "runtime", "tscompile.js"),
+    read(ROOT, "runtime", "reactframe.js"),
+  ];
+  const dom = new JSDOM('<!doctype html><html><head></head><body><div id="root"></div></body></html>',
+                        // A silent console: React's dev build re-dispatches render errors as window
+                        // "error" events, and the harness already reports them per test.
+                        { runScripts: "dangerously", pretendToBeVisual: true, virtualConsole: new VirtualConsole() });
+  dom.window.MessageChannel = MessageChannel; // React's act() queues work through it; jsdom has none
+  reactScripts.forEach((source) => dom.window.eval(source));
+  const stdout = [];
+  const reply = await new Promise((resolve) => {
+    dom.window.WololoopFrame.run({ js: compiled.js, maps: compiled.maps, mode, stages, timeoutMs: 20000 }, (msg) => {
+      if (msg.type === "done") resolve(msg.payload);
+      else stdout.push(msg.text);
+    });
+  });
+  dom.window.close();
+  if (!reply.ok || mode !== "test") return { ...reply, compiled, stdout };
+  return { ok: true, result: TsCompile.mergeTypeResults({ tests: reply.rows }, compiled, stages), compiled, stdout };
+}
+
+async function verify(compilers, dir) {
   const name = path.basename(dir);
   const failures = [];
-  const tests = read(dir, "tests.ts");
+  const react = fs.existsSync(path.join(dir, "tests.tsx"));
+  const ext = react ? ".tsx" : ".ts";
+  const tests = read(dir, "tests" + ext);
 
-  const solution = await runCase(compiler, { code: read(dir, "solution.ts"), tests });
+  const solution = await runCase(compilers, { code: read(dir, "solution" + ext), tests, react });
   const hDiag = solution.compiled.diagnostics.filter((d) => d.file === "harness.ts");
   hDiag.forEach((d) => failures.push("harness: " + TsCompile.formatDiagnostic(d)));
   if (!solution.ok) {
@@ -99,18 +157,18 @@ async function verify(compiler, dir) {
     }
   }
 
-  const starter = await runCase(compiler, { code: read(dir, "starter.ts"), tests, stages: [1] });
+  const starter = await runCase(compilers, { code: read(dir, "starter" + ext), tests, stages: [1], react });
   if (starter.ok) {
     const one = starter.result.tests.filter((t) => t.stage === 1);
     if (one.length && one.every((t) => t.status === "pass")) {
       failures.push("starter.ts already passes part 1 - the stage has no teeth");
     }
-    const starterCodeErrors = starter.compiled.diagnostics.filter((d) => d.file === "your_code.ts");
+    const starterCodeErrors = starter.compiled.diagnostics.filter((d) => /^your_code\./.test(d.file || ""));
     starterCodeErrors.forEach((d) => failures.push("starter.ts should type-check: " + TsCompile.formatDiagnostic(d)));
     // Helpers outside test() blocks must compile against the bare starter, or
     // Part 1 can never go green: those errors fail every stage's type-check row.
     starter.compiled.diagnostics
-      .filter((d) => d.file === "tests.ts" && !starter.compiled.testSpans.some((sp) => d.line >= sp.start && d.line <= sp.end))
+      .filter((d) => /^tests\./.test(d.file || "") && !starter.compiled.testSpans.some((sp) => d.line >= sp.start && d.line <= sp.end))
       .forEach((d) => failures.push("tests.ts outside any test() fails against the starter: " + TsCompile.formatDiagnostic(d)));
   }
 
@@ -121,7 +179,7 @@ async function verify(compiler, dir) {
   }
   const summary = solution.result.stages.map((s) => "p" + s.stage + ":" + s.total).join(" ");
   console.log(GREEN + name.padEnd(34) + " ok" + RESET + "  " + DIM + solution.result.total + " tests (" +
-              summary + ", tsc strict)" + RESET);
+              summary + ", tsc strict" + (react ? ", React" : "") + ")" + RESET);
   return true;
 }
 
@@ -131,9 +189,9 @@ async function main() {
     console.log("usage: node tools/verify_ts.mjs <challenge dir>...");
     return 2;
   }
-  const compiler = await makeCompiler();
+  const compilers = await makeCompiler();
   let ok = true;
-  for (const dir of dirs) ok = (await verify(compiler, path.resolve(dir))) && ok;
+  for (const dir of dirs) ok = (await verify(compilers, path.resolve(dir))) && ok;
   return ok ? 0 : 1;
 }
 

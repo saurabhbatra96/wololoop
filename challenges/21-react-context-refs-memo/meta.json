@@ -1,0 +1,14 @@
+{
+  "id": "21-react-context-refs-memo",
+  "title": "Context, Refs and Memo",
+  "domain": "React refresher",
+  "section": "TypeScript + React refresher",
+  "language": "react",
+  "minutes": 25,
+  "skills": ["createContext", "provider hooks", "useRef", "focus management", "keyboard handling", "useMemo"],
+  "stages": [
+    {"n": 1, "name": "Who's signed in? (context)", "minutes": 8},
+    {"n": 2, "name": "Rename in place (refs and focus)", "minutes": 10},
+    {"n": 3, "name": "Don't redo expensive work (useMemo)", "minutes": 7}
+  ]
+}

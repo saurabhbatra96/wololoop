@@ -36,6 +36,12 @@ const __TESTS: { stage: number; name: string; fn: TestBody }[] = [];
 const __TEST_TIMEOUT_MS = 2000;
 
 const __MAINS: (() => unknown)[] = [];
+const __AFTER_EACH: (() => unknown)[] = [];
+
+/** Runs after every test, pass or fail - the React helpers use it to unmount. */
+function afterEach(fn: () => unknown): void {
+  __AFTER_EACH.push(fn);
+}
 
 function main(fn: () => unknown): void {
   __MAINS.push(fn);
@@ -226,6 +232,16 @@ async function __wololoopRun(stages: number[] | null, clean: (err: unknown) => s
       }
     } finally {
       clearTimeout(timer);
+      for (const hook of __AFTER_EACH) {
+        try {
+          await hook();
+        } catch (err) {
+          if (status === "pass") {
+            status = "error";
+            message = "cleanup after the test failed: " + clean(err);
+          }
+        }
+      }
     }
     rows.push({ name: t.name, func: t.name, stage: t.stage, status, message, ms: Date.now() - started });
   }

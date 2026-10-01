@@ -1,0 +1,14 @@
+{
+  "id": "23-react-mock-live-transcript",
+  "title": "Mock: Live Transcript",
+  "domain": "45-minute mock",
+  "section": "Granola React mocks (45 min)",
+  "language": "react",
+  "minutes": 45,
+  "skills": ["grouping derived data", "subscriptions and cleanup", "de-duplication", "buffering", "highlighting text safely", "filters"],
+  "stages": [
+    {"n": 1, "name": "Render a transcript", "minutes": 13},
+    {"n": 2, "name": "Make it live", "minutes": 15},
+    {"n": 3, "name": "Find in transcript", "minutes": 17}
+  ]
+}

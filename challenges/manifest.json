@@ -5,6 +5,7 @@
       "title": "Trade Settlement Netting",
       "domain": "Capital markets",
       "language": "python",
+      "section": null,
       "minutes": 45,
       "skills": [
         "hash aggregation",
@@ -18,6 +19,7 @@
       "title": "Order Matching Engine",
       "domain": "Exchange / trading",
       "language": "python",
+      "section": null,
       "minutes": 45,
       "skills": [
         "heaps",
@@ -31,6 +33,7 @@
       "title": "Payments API Rate Limiter",
       "domain": "Fintech infrastructure",
       "language": "python",
+      "section": null,
       "minutes": 40,
       "skills": [
         "deques",
@@ -44,6 +47,7 @@
       "title": "CRM Lead Deduplication",
       "domain": "CRM / entity resolution",
       "language": "python",
+      "section": null,
       "minutes": 45,
       "skills": [
         "normalisation",
@@ -57,6 +61,7 @@
       "title": "Consulting Utilisation and Staffing",
       "domain": "Professional services",
       "language": "python",
+      "section": null,
       "minutes": 45,
       "skills": [
         "date bucketing",
@@ -70,6 +75,7 @@
       "title": "SaaS Billing and Proration",
       "domain": "SaaS / billing",
       "language": "python",
+      "section": null,
       "minutes": 45,
       "skills": [
         "integer money",
@@ -83,6 +89,7 @@
       "title": "Clickstream Sessionisation",
       "domain": "Product analytics",
       "language": "python",
+      "section": null,
       "minutes": 40,
       "skills": [
         "sorting and grouping",
@@ -96,6 +103,7 @@
       "title": "Inventory Allocation",
       "domain": "Retail supply chain",
       "language": "python",
+      "section": null,
       "minutes": 45,
       "skills": [
         "greedy allocation",
@@ -109,6 +117,7 @@
       "title": "Incident Alert Correlation",
       "domain": "SRE / observability",
       "language": "python",
+      "section": null,
       "minutes": 45,
       "skills": [
         "windowed aggregation",
@@ -122,6 +131,7 @@
       "title": "Health Claims Adjudication",
       "domain": "Health insurance",
       "language": "python",
+      "section": null,
       "minutes": 45,
       "skills": [
         "ordered accumulation",
@@ -135,6 +145,7 @@
       "title": "Granola Notes API Client",
       "domain": "Granola API / client SDK",
       "language": "typescript",
+      "section": "TypeScript: API design (Granola)",
       "minutes": 45,
       "skills": [
         "async iterators",
@@ -150,6 +161,7 @@
       "title": "Granola Webhook Receiver",
       "domain": "Granola API / webhooks",
       "language": "typescript",
+      "section": "TypeScript: API design (Granola)",
       "minutes": 45,
       "skills": [
         "HMAC verification",
@@ -164,6 +176,7 @@
       "title": "Typed Endpoints for the Notes API",
       "domain": "Granola API / server design",
       "language": "typescript",
+      "section": "TypeScript: API design (Granola)",
       "minutes": 45,
       "skills": [
         "input validation",
@@ -179,6 +192,7 @@
       "title": "Evolving the Notes API",
       "domain": "Granola API / versioning",
       "language": "typescript",
+      "section": "TypeScript: API design (Granola)",
       "minutes": 45,
       "skills": [
         "version pinning",
@@ -186,6 +200,148 @@
         "recursive schema diff",
         "variance",
         "semver"
+      ]
+    },
+    {
+      "id": "15-ts-warmup-meeting-data",
+      "title": "TypeScript Warm-up: Meeting Data",
+      "domain": "TypeScript refresher",
+      "language": "typescript",
+      "section": "TypeScript + React refresher",
+      "minutes": 25,
+      "skills": [
+        "array methods",
+        "immutability",
+        "discriminated unions",
+        "narrowing",
+        "generics",
+        "utility types"
+      ]
+    },
+    {
+      "id": "16-ts-warmup-async",
+      "title": "TypeScript Warm-up: Async",
+      "domain": "TypeScript refresher",
+      "language": "typescript",
+      "section": "TypeScript + React refresher",
+      "minutes": 25,
+      "skills": [
+        "promises",
+        "async/await",
+        "sequential vs parallel",
+        "error handling",
+        "request de-duplication"
+      ]
+    },
+    {
+      "id": "17-react-components-and-lists",
+      "title": "Components, Props and Lists",
+      "domain": "React refresher",
+      "language": "react",
+      "section": "TypeScript + React refresher",
+      "minutes": 25,
+      "skills": [
+        "JSX",
+        "props",
+        "lists and keys",
+        "conditional rendering",
+        "lifting state",
+        "derived state"
+      ]
+    },
+    {
+      "id": "18-react-forms",
+      "title": "Forms and Controlled Inputs",
+      "domain": "React refresher",
+      "language": "react",
+      "section": "TypeScript + React refresher",
+      "minutes": 25,
+      "skills": [
+        "controlled inputs",
+        "form submit",
+        "validation",
+        "async pending/error state",
+        "resetting state with key"
+      ]
+    },
+    {
+      "id": "19-react-effects-fetching",
+      "title": "Effects and Data Fetching",
+      "domain": "React refresher",
+      "language": "react",
+      "section": "TypeScript + React refresher",
+      "minutes": 25,
+      "skills": [
+        "useEffect",
+        "loading/error states",
+        "race conditions",
+        "effect cleanup",
+        "AbortController",
+        "intervals"
+      ]
+    },
+    {
+      "id": "20-react-reducers-and-hooks",
+      "title": "Reducers and Custom Hooks",
+      "domain": "React refresher",
+      "language": "react",
+      "section": "TypeScript + React refresher",
+      "minutes": 25,
+      "skills": [
+        "useReducer",
+        "pure reducers",
+        "discriminated-union actions",
+        "custom hooks",
+        "undo history",
+        "debouncing"
+      ]
+    },
+    {
+      "id": "21-react-context-refs-memo",
+      "title": "Context, Refs and Memo",
+      "domain": "React refresher",
+      "language": "react",
+      "section": "TypeScript + React refresher",
+      "minutes": 25,
+      "skills": [
+        "createContext",
+        "provider hooks",
+        "useRef",
+        "focus management",
+        "keyboard handling",
+        "useMemo"
+      ]
+    },
+    {
+      "id": "22-react-mock-notes-app",
+      "title": "Mock: Meeting Notes App",
+      "domain": "45-minute mock",
+      "language": "react",
+      "section": "Granola React mocks (45 min)",
+      "minutes": 45,
+      "skills": [
+        "data fetching",
+        "list + detail",
+        "cursor pagination",
+        "debounced server search",
+        "stale responses",
+        "optimistic updates"
+      ]
+    },
+    {
+      "id": "23-react-mock-live-transcript",
+      "title": "Mock: Live Transcript",
+      "domain": "45-minute mock",
+      "language": "react",
+      "section": "Granola React mocks (45 min)",
+      "minutes": 45,
+      "skills": [
+        "grouping derived data",
+        "subscriptions and cleanup",
+        "de-duplication",
+        "buffering",
+        "highlighting text safely",
+        "filters"
       ]
     }
   ]

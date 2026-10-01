@@ -1,0 +1,14 @@
+{
+  "id": "22-react-mock-notes-app",
+  "title": "Mock: Meeting Notes App",
+  "domain": "45-minute mock",
+  "section": "Granola React mocks (45 min)",
+  "language": "react",
+  "minutes": 45,
+  "skills": ["data fetching", "list + detail", "cursor pagination", "debounced server search", "stale responses", "optimistic updates"],
+  "stages": [
+    {"n": 1, "name": "Notes and a detail pane", "minutes": 15},
+    {"n": 2, "name": "More notes, and search", "minutes": 15},
+    {"n": 3, "name": "Rename, optimistically", "minutes": 15}
+  ]
+}

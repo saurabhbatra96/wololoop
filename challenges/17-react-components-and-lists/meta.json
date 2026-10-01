@@ -1,0 +1,14 @@
+{
+  "id": "17-react-components-and-lists",
+  "title": "Components, Props and Lists",
+  "domain": "React refresher",
+  "section": "TypeScript + React refresher",
+  "language": "react",
+  "minutes": 25,
+  "skills": ["JSX", "props", "lists and keys", "conditional rendering", "lifting state", "derived state"],
+  "stages": [
+    {"n": 1, "name": "Render a list", "minutes": 8},
+    {"n": 2, "name": "Selecting a meeting", "minutes": 9},
+    {"n": 3, "name": "Filtering without extra state", "minutes": 8}
+  ]
+}

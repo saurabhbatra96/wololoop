@@ -8,6 +8,9 @@ const CDN = "https://cdn.jsdelivr.net/npm/typescript@" + TsCompile.TS_VERSION + 
 
 let compiler = null;
 let bootPromise = null;
+let libs = null;
+let reactCompiler = null;
+let reactPromise = null;
 
 const post = (msg) => self.postMessage(msg);
 
@@ -23,10 +26,11 @@ function boot() {
     bootPromise = (async () => {
       post({ type: "status", text: "Fetching TypeScript compiler (~9 MB, cached after the first time)" });
       importScripts(CDN + "typescript.js");
-      const [libs, ambient] = await Promise.all([
+      const [loaded, ambient] = await Promise.all([
         TsCompile.loadLibs((name) => fetchText(CDN + name)),
         fetchText("../runtime/ambient.d.ts"),
       ]);
+      libs = loaded;
       compiler = TsCompile.createCompiler(self.ts, libs, ambient);
       return compiler;
     })();
@@ -34,13 +38,33 @@ function boot() {
   return bootPromise;
 }
 
+/* React challenges also need the DOM lib (~1 MB) and @types/react, so those load on first use. */
+function bootReact() {
+  if (!reactPromise) {
+    reactPromise = (async () => {
+      await boot();
+      post({ type: "status", text: "Fetching React types" });
+      const [, types] = await Promise.all([
+        TsCompile.loadLibs((name) => fetchText(CDN + name), TsCompile.REACT_LIBS, libs),
+        TsCompile.loadReactTypes((pkg, version, name) =>
+          fetchText("https://cdn.jsdelivr.net/npm/" + pkg + "@" + version + "/" + name)),
+      ]);
+      reactCompiler = TsCompile.createCompiler(self.ts, libs, "", { types });
+      return reactCompiler;
+    })();
+    reactPromise.catch(() => { reactPromise = null; });
+  }
+  return reactPromise;
+}
+
 self.onmessage = async (event) => {
   const msg = event.data || {};
   const id = msg.id;
   try {
-    const c = await boot();
+    let c = await boot();
+    if (msg.react) c = await bootReact();
     if (msg.type === "init") {
-      post({ type: "done", id, payload: { ok: true, version: self.ts.version } });
+      post({ type: "done", id, payload: { ok: true, version: self.ts.version, react: Boolean(msg.react) } });
       return;
     }
     if (msg.type === "compile") {

@@ -20,12 +20,23 @@
   const TS_VERSION = "6.0.3";
   const ROOT_LIB = "lib.es2022.d.ts";
   const FILES = { harness: "/harness.ts", code: "/your_code.ts", tests: "/tests.ts", ambient: "/ambient.d.ts" };
-  const DISPLAY = { "/harness.ts": "harness.ts", "/your_code.ts": "your_code.ts", "/tests.ts": "tests.ts", "/ambient.d.ts": "ambient.d.ts" };
+  const REACT_FILES = { harness: "/harness.ts", code: "/your_code.tsx", tests: "/tests.tsx" };
+  const display = (fileName) => fileName.replace(/^\//, "");
 
-  /* Fetch the es2022 lib and everything it references, via readLib(name). */
-  async function loadLibs(readLib) {
-    const libs = new Map();
-    let frontier = [ROOT_LIB];
+  /* React challenges: modules + JSX + the DOM, typed by the real @types packages. React 18.3.1 is
+   * the last release with a UMD build, which is what lets the pad load it without a bundler. */
+  const REACT_VERSION = "18.3.1";
+  const REACT_LIBS = ["lib.dom.d.ts", "lib.dom.iterable.d.ts"];
+  const REACT_TYPES = [
+    ["@types/react", "18.3.31", ["package.json", "index.d.ts", "global.d.ts", "jsx-runtime.d.ts", "jsx-dev-runtime.d.ts"]],
+    ["@types/react-dom", "18.3.7", ["package.json", "index.d.ts", "client.d.ts"]],
+    ["@types/prop-types", "15.7.15", ["package.json", "index.d.ts"]],
+    ["csstype", "3.2.3", ["package.json", "index.d.ts"]],
+  ];
+
+  /* Fetch the given libs and everything they reference, via readLib(name). */
+  async function loadLibs(readLib, roots = [ROOT_LIB], libs = new Map()) {
+    let frontier = roots.filter((name) => !libs.has(name));
     while (frontier.length) {
       const texts = await Promise.all(frontier.map((name) => readLib(name)));
       const next = [];
@@ -42,8 +53,53 @@
     return libs;
   }
 
-  function createCompiler(ts, libs, ambientSource) {
-    const options = {
+  /* Fetch the React type packages as a Map of virtual node_modules paths -> text. */
+  async function loadReactTypes(readPackageFile) {
+    const files = new Map();
+    await Promise.all(REACT_TYPES.flatMap(([pkg, version, names]) => names.map(async (name) => {
+      files.set("/node_modules/" + pkg + "/" + name, await readPackageFile(pkg, version, name));
+    })));
+    return files;
+  }
+
+  /* Before each loop body, call __loopGuard(). Code runs in an iframe for React challenges, and a
+   * busy loop there can freeze the page for good - the guard throws once the run's time is up. */
+  function loopGuardTransformer(ts) {
+    return (context) => {
+      const f = context.factory;
+      const guard = () => f.createExpressionStatement(f.createCallExpression(f.createIdentifier("__loopGuard"), undefined, []));
+      const wrap = (body) => ts.isBlock(body) ? f.updateBlock(body, [guard(), ...body.statements]) : f.createBlock([guard(), body], true);
+      const visit = (node) => {
+        node = ts.visitEachChild(node, visit, context);
+        if (ts.isForStatement(node)) return f.updateForStatement(node, node.initializer, node.condition, node.incrementor, wrap(node.statement));
+        if (ts.isForOfStatement(node)) return f.updateForOfStatement(node, node.awaitModifier, node.initializer, node.expression, wrap(node.statement));
+        if (ts.isForInStatement(node)) return f.updateForInStatement(node, node.initializer, node.expression, wrap(node.statement));
+        if (ts.isWhileStatement(node)) return f.updateWhileStatement(node, node.expression, wrap(node.statement));
+        if (ts.isDoStatement(node)) return f.updateDoStatement(node, wrap(node.statement), node.expression);
+        return node;
+      };
+      return (sourceFile) => ts.visitNode(sourceFile, visit);
+    };
+  }
+
+  /* `react` is null for plain-TypeScript challenges, or { types: Map } from loadReactTypes. */
+  function createCompiler(ts, libs, ambientSource, react = null) {
+    const files = react ? REACT_FILES : FILES;
+    const options = react ? {
+      target: ts.ScriptTarget.ES2022,
+      module: ts.ModuleKind.CommonJS,
+      moduleResolution: ts.ModuleResolutionKind.Node10,
+      esModuleInterop: true,
+      jsx: ts.JsxEmit.ReactJSX,
+      lib: [ROOT_LIB].concat(REACT_LIBS),
+      types: [],
+      strict: true,
+      noImplicitOverride: true,
+      noFallthroughCasesInSwitch: true,
+      noEmitOnError: false,
+      sourceMap: true,
+      newLine: ts.NewLineKind.LineFeed,
+    } : {
       target: ts.ScriptTarget.ES2022,
       module: ts.ModuleKind.None,
       lib: [ROOT_LIB],
@@ -69,14 +125,22 @@
       return libCache.get(name);
     };
 
+    const typeFiles = react ? react.types : new Map();
+    const typeCache = new Map();
+    const typeSource = (name) => {
+      if (!typeCache.has(name)) typeCache.set(name, ts.createSourceFile(name, typeFiles.get(name), ts.ScriptTarget.ES2022, true));
+      return typeCache.get(name);
+    };
+
     function compile({ code, harness, tests }) {
-      const sources = { [FILES.harness]: harness || "", [FILES.code]: code || "", [FILES.tests]: tests || "",
-                        [FILES.ambient]: ambientSource || "" };
+      const sources = { [files.harness]: harness || "", [files.code]: code || "", [files.tests]: tests || "" };
+      if (!react) sources[FILES.ambient] = ambientSource || "";
       const outputs = {};
 
       const host = {
         getSourceFile(fileName, languageVersion) {
           if (fileName.startsWith("/lib/")) return libSource(fileName.slice(5));
+          if (typeFiles.has(fileName)) return typeSource(fileName);
           if (fileName in sources) return ts.createSourceFile(fileName, sources[fileName], languageVersion, true);
           return undefined;
         },
@@ -85,35 +149,37 @@
         writeFile: (name, text) => { outputs[name] = text; },
         getCurrentDirectory: () => "/",
         getDirectories: () => [],
-        fileExists: (name) => name in sources || (name.startsWith("/lib/") && libs.has(name.slice(5))),
-        readFile: (name) => sources[name] ?? (name.startsWith("/lib/") ? libs.get(name.slice(5)) : undefined),
+        directoryExists: (dir) => dir === "/" || Array.from(typeFiles.keys()).some((k) => k.startsWith(dir.replace(/\/?$/, "/"))),
+        fileExists: (name) => name in sources || typeFiles.has(name) || (name.startsWith("/lib/") && libs.has(name.slice(5))),
+        readFile: (name) => sources[name] ?? typeFiles.get(name) ??
+          (name.startsWith("/lib/") ? libs.get(name.slice(5)) : undefined),
         getCanonicalFileName: (name) => name,
         useCaseSensitiveFileNames: () => true,
         getNewLine: () => "\n",
       };
 
-      const rootNames = [FILES.ambient, FILES.harness];
-      if (code !== undefined) rootNames.push(FILES.code);
-      if (tests) rootNames.push(FILES.tests);
+      const rootNames = react ? [files.harness] : [FILES.ambient, files.harness];
+      if (code !== undefined) rootNames.push(files.code);
+      if (tests) rootNames.push(files.tests);
 
       const program = ts.createProgram({ rootNames, options, host });
-      program.emit();
+      program.emit(undefined, undefined, undefined, false, react ? { before: [loopGuardTransformer(ts)] } : undefined);
 
       const diagnostics = ts.getPreEmitDiagnostics(program)
         .filter((d) => d.category === ts.DiagnosticCategory.Error)
         .map((d) => toDiagnostic(ts, d));
 
       const js = {};
-      const maps = {};
-      for (const [key, file] of Object.entries(FILES)) {
+      const maps = { ext: react ? "tsx" : "ts" };
+      for (const [key, file] of Object.entries(files)) {
         if (key === "ambient") continue;
-        const base = file.replace(/\.ts$/, "");
+        const base = file.replace(/\.tsx?$/, "");
         js[key] = (outputs[base + ".js"] || "").replace(/\n\/\/# sourceMappingURL=.*\s*$/, "\n");
         maps[key] = outputs[base + ".js.map"] ? decodeLineMap(JSON.parse(outputs[base + ".js.map"]).mappings) : [];
       }
 
-      const testSpans = tests ? findTestSpans(ts, program.getSourceFile(FILES.tests)) : [];
-      return { js, maps, diagnostics, testSpans };
+      const testSpans = tests ? findTestSpans(ts, program.getSourceFile(files.tests)) : [];
+      return { js, maps, diagnostics, testSpans, react: Boolean(react) };
     }
 
     return { compile, options };
@@ -123,7 +189,7 @@
     const message = ts.flattenDiagnosticMessageText(d.messageText, "\n");
     if (!d.file) return { file: null, line: 0, col: 0, code: d.code, message };
     const pos = d.file.getLineAndCharacterOfPosition(d.start || 0);
-    return { file: DISPLAY[d.file.fileName] || d.file.fileName, line: pos.line + 1, col: pos.character + 1,
+    return { file: display(d.file.fileName), line: pos.line + 1, col: pos.character + 1,
              code: d.code, message };
   }
 
@@ -131,15 +197,16 @@
     return (d.file ? d.file + ":" + d.line + ":" + d.col + " - " : "") + "error TS" + d.code + ": " + d.message;
   }
 
-  /* Every top-level `test(<n>, "<name>", ...)` call in tests.ts, with its line range. Top-level
-   * helpers tagged with a `/** @stage n *\/` doc comment get a span too: they can use Part n's
-   * API without breaking the parts before it, and their type errors count against Part n. */
+  /* Every top-level `test(<n>, "<name>", ...)` call in tests.ts, with its line range. Any other
+   * top-level statement - a helper, an import - preceded by a `/** @stage n *\/` comment gets a
+   * span too: it can use Part n's API without breaking the parts before it, and its type errors
+   * count against Part n. */
   function findTestSpans(ts, sourceFile) {
     const spans = [];
     if (!sourceFile) return spans;
     for (const statement of sourceFile.statements) {
-      const tag = ts.getJSDocTags(statement).find((t) => t.tagName.text === "stage");
-      const tagged = tag && /^\s*(\d+)/.exec(typeof tag.comment === "string" ? tag.comment : "");
+      const comments = ts.getLeadingCommentRanges(sourceFile.text, statement.pos) || [];
+      const tagged = comments.map((c) => /@stage\s+(\d+)/.exec(sourceFile.text.slice(c.pos, c.end))).find(Boolean);
       if (tagged) {
         const start = sourceFile.getLineAndCharacterOfPosition(statement.getStart(sourceFile)).line + 1;
         const end = sourceFile.getLineAndCharacterOfPosition(statement.getEnd()).line + 1;
@@ -196,7 +263,7 @@
     return String(stack || "").replace(/(harness|your_code|tests)\.js:(\d+):(\d+)/g, (whole, name, line) => {
       const key = name === "your_code" ? "code" : name;
       const original = maps[key] && maps[key][Number(line)];
-      return name + ".ts:" + (original || line);
+      return name + "." + (maps.ext || "ts") + ":" + (original || line);
     });
   }
 
@@ -206,8 +273,8 @@
     const head = (error.name || "Error") + ": " + (error.message || "");
     const frames = mapStack(error.stack || "", maps)
       .split("\n")
-      .filter((l) => /(your_code|tests)\.ts:\d+/.test(l))
-      .map((l) => "    " + l.trim().replace(/\(?(?:blob:|file:|https?:)[^()]*?(your_code|tests)\.ts/, "($1.ts"));
+      .filter((l) => /(your_code|tests)\.tsx?:\d+/.test(l))
+      .map((l) => "    " + l.trim().replace(/\(?(?:blob:|file:|https?:)[^()]*?(your_code|tests)\.(tsx?)/, "($1.$2"));
     return [head].concat(frames.slice(0, 6)).join("\n");
   }
 
@@ -215,15 +282,15 @@
 
   function mergeTypeResults(result, compiled, stages) {
     const wanted = stages ? new Set(stages) : null;
-    const codeErrors = compiled.diagnostics.filter((d) => d.file === "your_code.ts");
+    const codeErrors = compiled.diagnostics.filter((d) => /^your_code\.tsx?$/.test(d.file || ""));
     const orphanTestErrors = [];
 
-    for (const d of compiled.diagnostics.filter((x) => x.file === "tests.ts")) {
+    for (const d of compiled.diagnostics.filter((x) => /^tests\.tsx?$/.test(x.file || ""))) {
       const span = compiled.testSpans.find((s) => d.line >= s.start && d.line <= s.end);
       if (!span) { orphanTestErrors.push(d); continue; }
       // a test's error fails that test; a tagged helper's error fails every test in its part
       const rows = result.tests.filter((t) => t.stage === span.stage && (span.name === null || t.name === span.name));
-      const note = "type error at tests.ts:" + d.line + (span.name === null ? " (a Part " + span.stage + " helper)" : "") +
+      const note = "type error at " + d.file + ":" + d.line + (span.name === null ? " (a Part " + span.stage + " helper)" : "") +
         " - " + describe(d);
       for (const row of rows) {
         if (row.status !== "pass" && row.status !== "fail") continue;
@@ -265,7 +332,8 @@
     return { tests, stages, passed: tests.filter((t) => t.status === "pass").length, total: tests.length };
   }
 
-  const api = { TS_VERSION, ROOT_LIB, loadLibs, createCompiler, formatDiagnostic, mapStack, cleanStack,
+  const api = { TS_VERSION, ROOT_LIB, REACT_VERSION, REACT_LIBS, REACT_TYPES, loadLibs, loadReactTypes, createCompiler,
+                formatDiagnostic, mapStack, cleanStack,
                 mergeTypeResults, rollup };
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   else root.TsCompile = api;

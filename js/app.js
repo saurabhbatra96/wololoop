@@ -26,9 +26,12 @@ const state = {
 /* ------------------------------------------------------------------ editor */
 
 const LANGS = {
-  python: { ext: "py", label: "Python", harness: "runtime/harness.py", indent: 4, mode: "python" },
-  typescript: { ext: "ts", label: "TypeScript", harness: "runtime/harness.ts", indent: 2,
+  python: { ext: "py", label: "Python", runtime: "python", harness: ["runtime/harness.py"], indent: 4, mode: "python" },
+  typescript: { ext: "ts", label: "TypeScript", runtime: "typescript", harness: ["runtime/harness.ts"], indent: 2,
                 mode: { name: "javascript", typescript: true } },
+  react: { ext: "tsx", label: "React + TypeScript", runtime: "typescript",
+           harness: ["runtime/harness.ts", "runtime/harness-react.ts"], indent: 2,
+           mode: { name: "jsx", base: { name: "javascript", typescript: true } } },
 };
 
 const Editor = {
@@ -133,29 +136,33 @@ function loadSession(id) {
 
 /* ------------------------------------------------------------------ runner */
 
-/* One runner per language, booted the first time a challenge needs it. Each
- * remembers its last status so switching languages repaints the right one. */
+/* One runner per runtime (Python, or TypeScript - which also drives React), booted the first
+ * time a challenge needs it. Each remembers its last status so switching repaints the right one. */
 const runners = {};
 const lastStatus = {};
 
 function runnerFor(lang) {
-  if (!runners[lang]) {
-    const Runner = lang === "typescript" ? TsRunner : PyRunner;
-    runners[lang] = new Runner({
+  const kind = LANGS[lang].runtime;
+  if (!runners[kind]) {
+    const Runner = kind === "typescript" ? TsRunner : PyRunner;
+    runners[kind] = new Runner({
       onStdout: (text, isError) => appendConsole(text, isError ? "err" : ""),
       onStatus: (text) => {
-        lastStatus[lang] = text;
-        if (state.lang === lang) setRuntime(text, /ready/i.test(text) ? "ready" : "busy");
+        lastStatus[kind] = text;
+        if (LANGS[state.lang].runtime === kind) setRuntime(text, /ready/i.test(text) ? "ready" : "busy");
       },
+      previewHost: () => $("preview"),
     });
   }
-  return runners[lang];
+  return runners[kind];
 }
 
 const runner = () => runnerFor(state.lang);
 
 async function harnessFor(lang) {
-  if (!harnessFor.cache[lang]) harnessFor.cache[lang] = await fetchText(LANGS[lang].harness);
+  if (!harnessFor.cache[lang]) {
+    harnessFor.cache[lang] = (await Promise.all(LANGS[lang].harness.map(fetchText))).join("\n");
+  }
   return harnessFor.cache[lang];
 }
 harnessFor.cache = {};
@@ -183,6 +190,7 @@ function showOut(which) {
   });
   $("console").classList.toggle("hidden", which !== "console");
   $("tests").classList.toggle("hidden", which !== "tests");
+  $("preview").classList.toggle("hidden", which !== "preview");
 }
 
 function setBusy(busy) {
@@ -202,7 +210,8 @@ async function execute(mode) {
   const payload = {
     code: Editor.get(),
     // the TS harness also declares main(), so your file needs it even to Run
-    harness: mode === "test" || state.lang === "typescript" ? state.harness : "",
+    harness: mode === "test" || state.lang !== "python" ? state.harness : "",
+    react: state.lang === "react",
     tests: mode === "test" ? state.tests : "",
     stages: mode === "test" ? state.unlocked : null,
     mode,
@@ -224,6 +233,7 @@ async function execute(mode) {
 
   if (mode === "run") {
     appendConsole("\n[finished in " + elapsed + " ms]\n", "meta");
+    if (state.lang === "react") showOut("preview");
     return;
   }
 
@@ -489,9 +499,11 @@ async function loadChallenge(id) {
   state.lang = lang;
   state.harness = harness;
   Editor.setLanguage(LANGS[lang]);
-  setRuntime(lastStatus[lang] || "booting " + LANGS[lang].label + "…",
-             /ready/i.test(lastStatus[lang] || "") ? "ready" : "busy");
-  runner().init();
+  const status = lastStatus[LANGS[lang].runtime];
+  setRuntime(status || "booting " + LANGS[lang].label + "…", /ready/i.test(status || "") ? "ready" : "busy");
+  runner().init(lang === "react");
+  $("preview-tab").classList.toggle("hidden", lang !== "react");
+  $("preview").textContent = "";
   state.parts = partsRaw.split(/\n<!--\s*part\s*-->\n/).map((p) => p.trim()).filter(Boolean);
   state.starter = starter;
   state.tests = tests;
@@ -531,11 +543,12 @@ async function loadManifest() {
 
   const picker = $("challenge-picker");
   picker.textContent = "";
-  Object.keys(LANGS).forEach((lang) => {
-    const entries = state.manifest.filter((c) => (c.language || "python") === lang);
-    if (!entries.length) return;
+  // One group per section, in the order sections first appear in the manifest.
+  const groupOf = (c) => c.section || LANGS[c.language || "python"].label;
+  Array.from(new Set(state.manifest.map(groupOf))).forEach((section) => {
+    const entries = state.manifest.filter((c) => groupOf(c) === section);
     const group = document.createElement("optgroup");
-    group.label = LANGS[lang].label;
+    group.label = section;
     entries.forEach((entry) => {
       const option = document.createElement("option");
       option.value = entry.id;

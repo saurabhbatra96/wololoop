@@ -73,7 +73,7 @@ def verify(challenge):
 def main():
     wanted = sys.argv[1:]
     challenges = sorted(p for p in (ROOT / "challenges").iterdir()
-                        if (p / "tests.py").exists() or (p / "tests.ts").exists())
+                        if any((p / name).exists() for name in ("tests.py", "tests.ts", "tests.tsx")))
     if wanted:
         challenges = [c for c in challenges if any(c.name.startswith(w) for w in wanted)]
     if not challenges:
@@ -84,7 +84,7 @@ def main():
         return json.loads((c / "meta.json").read_text()).get("language", "python")
 
     python = [c for c in challenges if language(c) == "python"]
-    typescript = [c for c in challenges if language(c) == "typescript"]
+    typescript = [c for c in challenges if language(c) in ("typescript", "react")]
 
     ok = all([verify(c) for c in python])
     if typescript:

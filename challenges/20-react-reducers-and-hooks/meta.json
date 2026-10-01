@@ -1,0 +1,14 @@
+{
+  "id": "20-react-reducers-and-hooks",
+  "title": "Reducers and Custom Hooks",
+  "domain": "React refresher",
+  "section": "TypeScript + React refresher",
+  "language": "react",
+  "minutes": 25,
+  "skills": ["useReducer", "pure reducers", "discriminated-union actions", "custom hooks", "undo history", "debouncing"],
+  "stages": [
+    {"n": 1, "name": "A reducer for action items", "minutes": 9},
+    {"n": 2, "name": "A custom hook, with undo", "minutes": 8},
+    {"n": 3, "name": "A debounced filter", "minutes": 8}
+  ]
+}

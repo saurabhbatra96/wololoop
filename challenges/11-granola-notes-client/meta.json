@@ -2,12 +2,32 @@
   "id": "11-granola-notes-client",
   "title": "Granola Notes API Client",
   "domain": "Granola API / client SDK",
+  "section": "TypeScript: API design (Granola)",
   "language": "typescript",
   "minutes": 45,
-  "skills": ["async iterators", "cursor pagination", "retry policy", "typed errors", "overloads", "bounded concurrency"],
+  "skills": [
+    "async iterators",
+    "cursor pagination",
+    "retry policy",
+    "typed errors",
+    "overloads",
+    "bounded concurrency"
+  ],
   "stages": [
-    {"n": 1, "name": "Every note, a page at a time", "minutes": 12},
-    {"n": 2, "name": "Retries that don't make it worse", "minutes": 15},
-    {"n": 3, "name": "Transcripts and fan-out", "minutes": 18}
+    {
+      "n": 1,
+      "name": "Every note, a page at a time",
+      "minutes": 12
+    },
+    {
+      "n": 2,
+      "name": "Retries that don't make it worse",
+      "minutes": 15
+    },
+    {
+      "n": 3,
+      "name": "Transcripts and fan-out",
+      "minutes": 18
+    }
   ]
 }

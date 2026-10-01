@@ -68,11 +68,13 @@
       <nav class="out-tabs">
         <button data-out="console" class="active">Output</button>
         <button data-out="tests">Tests <span class="tally" id="tally"></span></button>
+        <button data-out="preview" id="preview-tab" class="hidden">Preview</button>
         <div class="spacer"></div>
         <button id="btn-clear" class="ghost small">Clear</button>
       </nav>
       <pre class="console" id="console"></pre>
       <div class="tests hidden" id="tests"></div>
+      <div class="preview hidden" id="preview"></div>
     </div>
   </section>
 </main>
@@ -91,6 +93,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/python/python.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/xml/xml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/jsx/jsx.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/matchbrackets.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closebrackets.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/selection/active-line.min.js"></script>

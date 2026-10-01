@@ -1,0 +1,14 @@
+{
+  "id": "15-ts-warmup-meeting-data",
+  "title": "TypeScript Warm-up: Meeting Data",
+  "domain": "TypeScript refresher",
+  "section": "TypeScript + React refresher",
+  "language": "typescript",
+  "minutes": 25,
+  "skills": ["array methods", "immutability", "discriminated unions", "narrowing", "generics", "utility types"],
+  "stages": [
+    {"n": 1, "name": "Arrays and objects", "minutes": 8},
+    {"n": 2, "name": "Unions and narrowing", "minutes": 8},
+    {"n": 3, "name": "Generics and utility types", "minutes": 9}
+  ]
+}

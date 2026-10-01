@@ -1,0 +1,14 @@
+{
+  "id": "18-react-forms",
+  "title": "Forms and Controlled Inputs",
+  "domain": "React refresher",
+  "section": "TypeScript + React refresher",
+  "language": "react",
+  "minutes": 25,
+  "skills": ["controlled inputs", "form submit", "validation", "async pending/error state", "resetting state with key"],
+  "stages": [
+    {"n": 1, "name": "A controlled form", "minutes": 8},
+    {"n": 2, "name": "Saving is async", "minutes": 8},
+    {"n": 3, "name": "Editing, and switching notes", "minutes": 9}
+  ]
+}

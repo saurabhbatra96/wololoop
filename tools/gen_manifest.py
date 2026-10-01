@@ -18,6 +18,7 @@ def main():
                 "title": meta["title"],
                 "domain": meta["domain"],
                 "language": meta.get("language", "python"),
+                "section": meta.get("section"),
                 "minutes": meta["minutes"],
                 "skills": meta.get("skills", []),
             }

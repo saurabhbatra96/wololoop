@@ -2,10 +2,10 @@
 
 > `while not hired: practice()`
 
-A CoderPad-style practice pad that runs **real Python 3** and **strict
-TypeScript** in your browser, plus **14 staged interview problems** built to
-feel like the real thing: a simple problem first, then an interviewer piling on
-requirements once your first solution works.
+A CoderPad-style practice pad that runs **real Python 3**, **strict
+TypeScript** and **React** in your browser, plus **23 staged interview
+problems** built to feel like the real thing: a simple problem first, then an
+interviewer piling on requirements once your first solution works.
 
 No server, no build step, no dependencies. It's a folder of static files —
 dressed, for no defensible reason, as an Age of Empires interface.
@@ -93,6 +93,36 @@ file must also type-check under `strict`.
 | 13 | Typed Endpoints for the Notes API | Validating List Notes' real query params → a Zod-sized schema library with inferred types → a router with path params inferred from the route string |
 | 14 | Evolving the Notes API | Version pinning with downgrades built from the real changelog → a breaking-change detector for response schemas → request schemas, where variance flips the rules, and semver bumps |
 
+### TypeScript + React refresher
+
+For getting your hands back on the keyboard after a while away. Each is about
+25 minutes, and each part drills one fundamental. React problems are `.tsx`:
+you write `import { useState } from "react"` and `export default function App`
+as you would in a real project, **Run** shows your app in a **Preview** tab,
+and the tests use Testing Library's API (`screen.getByRole`, `user.click`,
+`waitFor`...), so they find things the way a user would.
+
+| # | Problem | Parts |
+|---|---------|-------|
+| 15 | TypeScript Warm-up: Meeting Data | Array methods without mutation → discriminated unions, `never` exhaustiveness, narrowing → generics, `keyof`, `Pick`/`Partial`/`Omit` |
+| 16 | TypeScript Warm-up: Async | Series vs parallel, timeouts → `allSettled`, `AggregateError`, retry → an in-flight de-duplicating cache (the core of React Query) |
+| 17 | Components, Props and Lists | JSX, lists and keys, conditional rendering → lifting state, storing ids not objects → derived state instead of synced state |
+| 18 | Forms and Controlled Inputs | Controlled inputs, validation, submit → async pending/error states as one status → editing, dirty tracking, resetting state with `key` |
+| 19 | Effects and Data Fetching | Loading/error/data → race conditions on a changing id → `AbortController`, background polling, cleanup |
+| 20 | Reducers and Custom Hooks | A pure reducer over a discriminated-union action → a custom hook with undo history → `useDebouncedValue` |
+| 21 | Context, Refs and Memo | A provider and a hook that fails loudly outside it → inline rename with focus management → `useMemo` that the tests can count |
+
+### Granola React mocks (45 minutes)
+
+Two full-length mocks shaped like a Granola interview ("TypeScript and a bit
+of React, the kind of work we do day to day"). Get each part working before
+polishing, and talk as you go.
+
+| # | Problem | The arc |
+|---|---------|---------|
+| 22 | Mock: Meeting Notes App | List and detail with last-click-wins → cursor pagination and debounced server search that ignores stale results → an optimistic rename that rolls back |
+| 23 | Mock: Live Transcript | Grouping lines by speaker → a live subscription with cleanup, de-duplication and pause/resume → search highlighting without regex or `innerHTML`, and a speaker filter |
+
 ## Adding your own
 
 One directory per challenge under `challenges/`:
@@ -110,7 +140,9 @@ Tests run in the **same namespace** as the candidate's code, so they call
 functions by name with no imports. `@stage(n)`, `assert_eq` and `assert_close`
 come from `runtime/harness.py` for free.
 
-For a TypeScript problem, set `"language": "typescript"` and use `.ts` files.
+For a TypeScript problem, set `"language": "typescript"` and use `.ts` files;
+for React, `"language": "react"` and `.tsx` files. An optional `"section"`
+groups problems in the picker.
 None of the three files are modules (no `import`/`export`), so they share one
 global scope just like the Python version. `runtime/harness.ts` gives you
 `test(n, name, fn)` (fn may be async), `assertEqual` (deep), `assertThrows`,
@@ -123,7 +155,15 @@ code that should run on **Run** but not under **Run Tests**. Two rules for
 - Anything **outside** a `test(...)` call must compile against the bare
   starter, or Part 1 can never go green. If a helper needs a later part's
   types, tag it with a `/** @stage n */` doc comment and its type errors count
-  against Part n only. `verify.py` checks for this.
+  against Part n only. That works on imports too: in a React problem,
+  `/** @stage 2 */ import App from "./your_code";` stops Part 1 breaking
+  because `App` doesn't exist yet. `verify.py` checks for this.
+
+React problems are real modules: `tests.tsx` imports from `./your_code`, and
+`runtime/harness-react.ts` adds `render`, `screen`, `within`, `user`,
+`waitFor`, `settle`, `createDeferred` and `preview(() => <App />)` (what Run
+shows). Components that talk to a server take the API as a prop, so tests can
+pass a fake one and settle each request by hand.
 
 Then:
 
@@ -149,6 +189,12 @@ compiler into `tools/.cache` (gitignored).
   Each run gets a **fresh worker**, so every run starts with a clean global
   scope and Stop is just "terminate it". Stack traces are mapped back to your
   `.ts` line numbers.
+- **React 18.3.1**, the last version with a UMD build, so it loads with no
+  bundler. React problems compile as CommonJS with the automatic JSX runtime,
+  typed by the real `@types/react`, and run in a **sandboxed iframe** with a
+  real DOM (fresh per run). An iframe can't be killed like a worker, so the
+  compiler adds a time guard to every loop. The verifier runs the same frame
+  code in jsdom.
 - Python runs in a **Web Worker**, so an infinite loop can't freeze the page —
   Stop terminates the worker and a fresh one takes its place. There's no
   interrupt buffer because `SharedArrayBuffer` needs COOP/COEP response headers,
@@ -162,7 +208,8 @@ compiler into `tools/.cache` (gitignored).
   challenge, per browser.
 
 **First load pulls about 11 MB** of Python runtime (or about 9 MB of TypeScript
-compiler, the first time you open a TypeScript problem) from jsDelivr, so it
+compiler, the first time you open a TypeScript problem, plus about 2 MB of React
+and its types for a React one) from jsDelivr, so it
 needs a network connection once; the browser caches it after that. Everything
 else is served from the repo.
 

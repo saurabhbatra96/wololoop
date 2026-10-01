@@ -423,6 +423,22 @@ kbd {
 
 .tests { flex: 1; overflow: auto; padding: 10px 12px; }
 
+/* React preview: the app renders in a sandboxed iframe, framed like an in-game window */
+.preview { flex: 1; display: flex; padding: 10px 12px; min-height: 0; }
+.preview:empty::before {
+  content: "Run (Ctrl+Enter) renders your preview() here.";
+  margin: auto;
+  color: #978a68;
+  font-style: italic;
+}
+.preview-frame {
+  flex: 1;
+  width: 100%;
+  border: 2px solid var(--gold-dark);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.5), 0 0 0 1px #16110b;
+  background: #fff;
+}
+
 .stage-group { margin-bottom: 18px; }
 .stage-group h4 {
   font-family: var(--display);
