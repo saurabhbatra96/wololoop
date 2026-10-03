@@ -1,0 +1,21 @@
+{
+  "id": "17a-react-render-a-list",
+  "title": "React 1: Render a List",
+  "domain": "React refresher",
+  "section": "TypeScript + React refresher",
+  "language": "react",
+  "minutes": 8,
+  "skills": [
+    "JSX",
+    "lists and keys",
+    "conditional rendering",
+    "immutable sorting"
+  ],
+  "stages": [
+    {
+      "n": 1,
+      "name": "Render a list",
+      "minutes": 8
+    }
+  ]
+}

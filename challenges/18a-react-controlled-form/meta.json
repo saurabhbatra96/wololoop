@@ -1,0 +1,21 @@
+{
+  "id": "18a-react-controlled-form",
+  "title": "React 4: A Controlled Form",
+  "domain": "React refresher",
+  "section": "TypeScript + React refresher",
+  "language": "react",
+  "minutes": 8,
+  "skills": [
+    "controlled inputs",
+    "labels",
+    "form submit",
+    "validation"
+  ],
+  "stages": [
+    {
+      "n": 1,
+      "name": "A controlled form",
+      "minutes": 8
+    }
+  ]
+}

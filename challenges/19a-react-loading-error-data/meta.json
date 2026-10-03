@@ -1,0 +1,20 @@
+{
+  "id": "19a-react-loading-error-data",
+  "title": "React 7: Loading, Error, Data",
+  "domain": "React refresher",
+  "section": "TypeScript + React refresher",
+  "language": "react",
+  "minutes": 8,
+  "skills": [
+    "useEffect",
+    "dependency arrays",
+    "loading/error states"
+  ],
+  "stages": [
+    {
+      "n": 1,
+      "name": "Loading, error, data",
+      "minutes": 8
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "id": "17c-react-filtering-derived-state",
+  "title": "React 3: Filtering Without Extra State",
+  "domain": "React refresher",
+  "section": "TypeScript + React refresher",
+  "language": "react",
+  "minutes": 8,
+  "skills": [
+    "controlled inputs",
+    "derived state",
+    "filtering"
+  ],
+  "stages": [
+    {
+      "n": 1,
+      "name": "Filtering without extra state",
+      "minutes": 8
+    }
+  ]
+}

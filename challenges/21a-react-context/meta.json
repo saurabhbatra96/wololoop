@@ -1,0 +1,20 @@
+{
+  "id": "21a-react-context",
+  "title": "React 13: Context",
+  "domain": "React refresher",
+  "section": "TypeScript + React refresher",
+  "language": "react",
+  "minutes": 8,
+  "skills": [
+    "createContext",
+    "provider components",
+    "hooks that fail loudly"
+  ],
+  "stages": [
+    {
+      "n": 1,
+      "name": "Who's signed in? (context)",
+      "minutes": 8
+    }
+  ]
+}

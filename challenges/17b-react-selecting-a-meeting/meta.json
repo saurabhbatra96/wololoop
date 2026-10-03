@@ -1,0 +1,21 @@
+{
+  "id": "17b-react-selecting-a-meeting",
+  "title": "React 2: Selecting a Meeting",
+  "domain": "React refresher",
+  "section": "TypeScript + React refresher",
+  "language": "react",
+  "minutes": 9,
+  "skills": [
+    "props callbacks",
+    "lifting state up",
+    "storing ids, not objects",
+    "derived values"
+  ],
+  "stages": [
+    {
+      "n": 1,
+      "name": "Selecting a meeting",
+      "minutes": 9
+    }
+  ]
+}

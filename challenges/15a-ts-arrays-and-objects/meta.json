@@ -1,0 +1,20 @@
+{
+  "id": "15a-ts-arrays-and-objects",
+  "title": "TS Warm-up 1: Arrays and Objects",
+  "domain": "TypeScript refresher",
+  "section": "TypeScript + React refresher",
+  "language": "typescript",
+  "minutes": 10,
+  "skills": [
+    "array methods",
+    "immutability",
+    "Set and Map"
+  ],
+  "stages": [
+    {
+      "n": 1,
+      "name": "Arrays and Objects",
+      "minutes": 10
+    }
+  ]
+}

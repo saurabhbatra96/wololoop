@@ -1,0 +1,21 @@
+{
+  "id": "21b-react-refs-and-focus",
+  "title": "React 14: Refs and Focus",
+  "domain": "React refresher",
+  "section": "TypeScript + React refresher",
+  "language": "react",
+  "minutes": 10,
+  "skills": [
+    "useRef",
+    "focus management",
+    "keyboard events",
+    "blur"
+  ],
+  "stages": [
+    {
+      "n": 1,
+      "name": "Rename in place (refs and focus)",
+      "minutes": 10
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "id": "15b-ts-unions-and-narrowing",
+  "title": "TS Warm-up 2: Unions and Narrowing",
+  "domain": "TypeScript refresher",
+  "section": "TypeScript + React refresher",
+  "language": "typescript",
+  "minutes": 10,
+  "skills": [
+    "discriminated unions",
+    "exhaustive switch",
+    "typeof narrowing"
+  ],
+  "stages": [
+    {
+      "n": 1,
+      "name": "Unions and Narrowing",
+      "minutes": 10
+    }
+  ]
+}

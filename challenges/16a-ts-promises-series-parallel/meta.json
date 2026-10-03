@@ -1,0 +1,20 @@
+{
+  "id": "16a-ts-promises-series-parallel",
+  "title": "TS Warm-up 4: Promises in Series and in Parallel",
+  "domain": "TypeScript refresher",
+  "section": "TypeScript + React refresher",
+  "language": "typescript",
+  "minutes": 10,
+  "skills": [
+    "promises",
+    "async/await",
+    "Promise.all"
+  ],
+  "stages": [
+    {
+      "n": 1,
+      "name": "Promises in Series and in Parallel",
+      "minutes": 10
+    }
+  ]
+}

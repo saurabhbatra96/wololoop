@@ -203,113 +203,280 @@
       ]
     },
     {
-      "id": "15-ts-warmup-meeting-data",
-      "title": "TypeScript Warm-up: Meeting Data",
+      "id": "15a-ts-arrays-and-objects",
+      "title": "TS Warm-up 1: Arrays and Objects",
       "domain": "TypeScript refresher",
       "language": "typescript",
       "section": "TypeScript + React refresher",
-      "minutes": 25,
+      "minutes": 10,
       "skills": [
         "array methods",
         "immutability",
-        "discriminated unions",
-        "narrowing",
-        "generics",
-        "utility types"
+        "Set and Map"
       ]
     },
     {
-      "id": "16-ts-warmup-async",
-      "title": "TypeScript Warm-up: Async",
+      "id": "15b-ts-unions-and-narrowing",
+      "title": "TS Warm-up 2: Unions and Narrowing",
       "domain": "TypeScript refresher",
       "language": "typescript",
       "section": "TypeScript + React refresher",
-      "minutes": 25,
+      "minutes": 10,
+      "skills": [
+        "discriminated unions",
+        "exhaustive switch",
+        "typeof narrowing"
+      ]
+    },
+    {
+      "id": "15c-ts-generics-and-utility-types",
+      "title": "TS Warm-up 3: Generics and Utility Types",
+      "domain": "TypeScript refresher",
+      "language": "typescript",
+      "section": "TypeScript + React refresher",
+      "minutes": 10,
+      "skills": [
+        "generics",
+        "keyof",
+        "Pick / Partial / Omit"
+      ]
+    },
+    {
+      "id": "16a-ts-promises-series-parallel",
+      "title": "TS Warm-up 4: Promises in Series and in Parallel",
+      "domain": "TypeScript refresher",
+      "language": "typescript",
+      "section": "TypeScript + React refresher",
+      "minutes": 10,
       "skills": [
         "promises",
         "async/await",
-        "sequential vs parallel",
-        "error handling",
-        "request de-duplication"
+        "Promise.all"
       ]
     },
     {
-      "id": "17-react-components-and-lists",
-      "title": "Components, Props and Lists",
+      "id": "16b-ts-async-errors",
+      "title": "TS Warm-up 5: When Async Things Fail",
+      "domain": "TypeScript refresher",
+      "language": "typescript",
+      "section": "TypeScript + React refresher",
+      "minutes": 10,
+      "skills": [
+        "allSettled",
+        "AggregateError",
+        "retry"
+      ]
+    },
+    {
+      "id": "16c-ts-request-dedupe-cache",
+      "title": "TS Warm-up 6: Sharing Work Between Callers",
+      "domain": "TypeScript refresher",
+      "language": "typescript",
+      "section": "TypeScript + React refresher",
+      "minutes": 12,
+      "skills": [
+        "in-flight de-duplication",
+        "TTL cache",
+        "invalidation"
+      ]
+    },
+    {
+      "id": "17a-react-render-a-list",
+      "title": "React 1: Render a List",
       "domain": "React refresher",
       "language": "react",
       "section": "TypeScript + React refresher",
-      "minutes": 25,
+      "minutes": 8,
       "skills": [
         "JSX",
-        "props",
         "lists and keys",
         "conditional rendering",
-        "lifting state",
-        "derived state"
+        "immutable sorting"
       ]
     },
     {
-      "id": "18-react-forms",
-      "title": "Forms and Controlled Inputs",
+      "id": "17b-react-selecting-a-meeting",
+      "title": "React 2: Selecting a Meeting",
       "domain": "React refresher",
       "language": "react",
       "section": "TypeScript + React refresher",
-      "minutes": 25,
+      "minutes": 9,
+      "skills": [
+        "props callbacks",
+        "lifting state up",
+        "storing ids, not objects",
+        "derived values"
+      ]
+    },
+    {
+      "id": "17c-react-filtering-derived-state",
+      "title": "React 3: Filtering Without Extra State",
+      "domain": "React refresher",
+      "language": "react",
+      "section": "TypeScript + React refresher",
+      "minutes": 8,
       "skills": [
         "controlled inputs",
+        "derived state",
+        "filtering"
+      ]
+    },
+    {
+      "id": "18a-react-controlled-form",
+      "title": "React 4: A Controlled Form",
+      "domain": "React refresher",
+      "language": "react",
+      "section": "TypeScript + React refresher",
+      "minutes": 8,
+      "skills": [
+        "controlled inputs",
+        "labels",
         "form submit",
-        "validation",
-        "async pending/error state",
+        "validation"
+      ]
+    },
+    {
+      "id": "18b-react-async-submit",
+      "title": "React 5: Async Saving",
+      "domain": "React refresher",
+      "language": "react",
+      "section": "TypeScript + React refresher",
+      "minutes": 8,
+      "skills": [
+        "async event handlers",
+        "pending/error state",
+        "one status value"
+      ]
+    },
+    {
+      "id": "18c-react-editing-and-key",
+      "title": "React 6: Editing, and Switching Notes",
+      "domain": "React refresher",
+      "language": "react",
+      "section": "TypeScript + React refresher",
+      "minutes": 9,
+      "skills": [
+        "initial values",
+        "dirty tracking",
         "resetting state with key"
       ]
     },
     {
-      "id": "19-react-effects-fetching",
-      "title": "Effects and Data Fetching",
+      "id": "19a-react-loading-error-data",
+      "title": "React 7: Loading, Error, Data",
       "domain": "React refresher",
       "language": "react",
       "section": "TypeScript + React refresher",
-      "minutes": 25,
+      "minutes": 8,
       "skills": [
         "useEffect",
-        "loading/error states",
-        "race conditions",
-        "effect cleanup",
-        "AbortController",
-        "intervals"
+        "dependency arrays",
+        "loading/error states"
       ]
     },
     {
-      "id": "20-react-reducers-and-hooks",
-      "title": "Reducers and Custom Hooks",
+      "id": "19b-react-stale-responses",
+      "title": "React 8: When the Id Changes",
       "domain": "React refresher",
       "language": "react",
       "section": "TypeScript + React refresher",
-      "minutes": 25,
+      "minutes": 8,
+      "skills": [
+        "race conditions",
+        "effect cleanup",
+        "ignore flags"
+      ]
+    },
+    {
+      "id": "19c-react-abort-and-refresh",
+      "title": "React 9: Cancelling and Refreshing",
+      "domain": "React refresher",
+      "language": "react",
+      "section": "TypeScript + React refresher",
+      "minutes": 9,
+      "skills": [
+        "AbortController",
+        "setInterval cleanup",
+        "background refresh"
+      ]
+    },
+    {
+      "id": "20a-react-use-reducer",
+      "title": "React 10: A Reducer for Action Items",
+      "domain": "React refresher",
+      "language": "react",
+      "section": "TypeScript + React refresher",
+      "minutes": 9,
       "skills": [
         "useReducer",
         "pure reducers",
-        "discriminated-union actions",
+        "discriminated-union actions"
+      ]
+    },
+    {
+      "id": "20b-react-custom-hook-undo",
+      "title": "React 11: A Custom Hook, with Undo",
+      "domain": "React refresher",
+      "language": "react",
+      "section": "TypeScript + React refresher",
+      "minutes": 8,
+      "skills": [
         "custom hooks",
-        "undo history",
+        "wrapping reducers",
+        "undo history"
+      ]
+    },
+    {
+      "id": "20c-react-debounced-filter",
+      "title": "React 12: A Debounced Filter",
+      "domain": "React refresher",
+      "language": "react",
+      "section": "TypeScript + React refresher",
+      "minutes": 8,
+      "skills": [
+        "custom hooks",
+        "useEffect timers",
         "debouncing"
       ]
     },
     {
-      "id": "21-react-context-refs-memo",
-      "title": "Context, Refs and Memo",
+      "id": "21a-react-context",
+      "title": "React 13: Context",
       "domain": "React refresher",
       "language": "react",
       "section": "TypeScript + React refresher",
-      "minutes": 25,
+      "minutes": 8,
       "skills": [
         "createContext",
-        "provider hooks",
+        "provider components",
+        "hooks that fail loudly"
+      ]
+    },
+    {
+      "id": "21b-react-refs-and-focus",
+      "title": "React 14: Refs and Focus",
+      "domain": "React refresher",
+      "language": "react",
+      "section": "TypeScript + React refresher",
+      "minutes": 10,
+      "skills": [
         "useRef",
         "focus management",
-        "keyboard handling",
-        "useMemo"
+        "keyboard events",
+        "blur"
+      ]
+    },
+    {
+      "id": "21c-react-use-memo",
+      "title": "React 15: useMemo",
+      "domain": "React refresher",
+      "language": "react",
+      "section": "TypeScript + React refresher",
+      "minutes": 7,
+      "skills": [
+        "useMemo",
+        "dependency arrays",
+        "derived data"
       ]
     },
     {

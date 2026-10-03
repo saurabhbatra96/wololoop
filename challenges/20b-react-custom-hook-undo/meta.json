@@ -1,0 +1,20 @@
+{
+  "id": "20b-react-custom-hook-undo",
+  "title": "React 11: A Custom Hook, with Undo",
+  "domain": "React refresher",
+  "section": "TypeScript + React refresher",
+  "language": "react",
+  "minutes": 8,
+  "skills": [
+    "custom hooks",
+    "wrapping reducers",
+    "undo history"
+  ],
+  "stages": [
+    {
+      "n": 1,
+      "name": "A custom hook, with undo",
+      "minutes": 8
+    }
+  ]
+}

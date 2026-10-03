@@ -1,0 +1,20 @@
+{
+  "id": "15c-ts-generics-and-utility-types",
+  "title": "TS Warm-up 3: Generics and Utility Types",
+  "domain": "TypeScript refresher",
+  "section": "TypeScript + React refresher",
+  "language": "typescript",
+  "minutes": 10,
+  "skills": [
+    "generics",
+    "keyof",
+    "Pick / Partial / Omit"
+  ],
+  "stages": [
+    {
+      "n": 1,
+      "name": "Generics and Utility Types",
+      "minutes": 10
+    }
+  ]
+}

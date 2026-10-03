@@ -13,7 +13,12 @@ function inline(text) {
 }
 
 function renderMarkdown(source) {
-  const lines = escapeHtml(source).split("\n");
+  return renderEscaped(escapeHtml(source));
+}
+
+/* Works on already-escaped text, so a blockquote can recurse without escaping twice. */
+function renderEscaped(source) {
+  const lines = source.split("\n");
   const out = [];
   let i = 0;
   let paragraph = [];
@@ -48,11 +53,12 @@ function renderMarkdown(source) {
       continue;
     }
 
-    if (/^>\s?/.test(line)) {
+    // ">" has already been escaped to "&gt;" by the time we get here
+    if (/^&gt;\s?/.test(line)) {
       flush();
       const body = [];
-      while (i < lines.length && /^>\s?/.test(lines[i])) body.push(lines[i++].replace(/^>\s?/, ""));
-      out.push("<blockquote>" + renderMarkdown(body.join("\n")) + "</blockquote>");
+      while (i < lines.length && /^&gt;\s?/.test(lines[i])) body.push(lines[i++].replace(/^&gt;\s?/, ""));
+      out.push("<blockquote>" + renderEscaped(body.join("\n")) + "</blockquote>");
       continue;
     }
 

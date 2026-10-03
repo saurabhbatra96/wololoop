@@ -1,0 +1,20 @@
+{
+  "id": "21c-react-use-memo",
+  "title": "React 15: useMemo",
+  "domain": "React refresher",
+  "section": "TypeScript + React refresher",
+  "language": "react",
+  "minutes": 7,
+  "skills": [
+    "useMemo",
+    "dependency arrays",
+    "derived data"
+  ],
+  "stages": [
+    {
+      "n": 1,
+      "name": "Don't redo expensive work (useMemo)",
+      "minutes": 7
+    }
+  ]
+}

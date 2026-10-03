@@ -1,0 +1,20 @@
+{
+  "id": "19c-react-abort-and-refresh",
+  "title": "React 9: Cancelling and Refreshing",
+  "domain": "React refresher",
+  "section": "TypeScript + React refresher",
+  "language": "react",
+  "minutes": 9,
+  "skills": [
+    "AbortController",
+    "setInterval cleanup",
+    "background refresh"
+  ],
+  "stages": [
+    {
+      "n": 1,
+      "name": "Cancelling and refreshing",
+      "minutes": 9
+    }
+  ]
+}

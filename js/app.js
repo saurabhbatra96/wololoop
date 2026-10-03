@@ -552,7 +552,7 @@ async function loadManifest() {
     entries.forEach((entry) => {
       const option = document.createElement("option");
       option.value = entry.id;
-      option.textContent = entry.id.slice(0, 2) + " · " + entry.title + "  (" + entry.domain + ", " + entry.minutes + "m)";
+      option.textContent = entry.id.split("-")[0] + " · " + entry.title + "  (" + entry.domain + ", " + entry.minutes + "m)";
       group.appendChild(option);
     });
     picker.appendChild(group);

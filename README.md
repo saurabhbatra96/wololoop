@@ -95,22 +95,28 @@ file must also type-check under `strict`.
 
 ### TypeScript + React refresher
 
-For getting your hands back on the keyboard after a while away. Each is about
-25 minutes, and each part drills one fundamental. React problems are `.tsx`:
-you write `import { useState } from "react"` and `export default function App`
-as you would in a real project, **Run** shows your app in a **Preview** tab,
-and the tests use Testing Library's API (`screen.getByRole`, `user.click`,
-`waitFor`...), so they find things the way a user would.
+For getting your hands back on the keyboard after a while away: 21 short,
+single-part problems (8–12 minutes each), each drilling one fundamental. Every
+starter has the types, signatures and `TODO`s laid out, so you're filling in
+bodies rather than guessing at shapes. Where a problem builds on the one
+before (17a → 17b → 17c, say), its starter is the previous answer, working,
+plus stubs for what's new.
 
-| # | Problem | Parts |
-|---|---------|-------|
-| 15 | TypeScript Warm-up: Meeting Data | Array methods without mutation → discriminated unions, `never` exhaustiveness, narrowing → generics, `keyof`, `Pick`/`Partial`/`Omit` |
-| 16 | TypeScript Warm-up: Async | Series vs parallel, timeouts → `allSettled`, `AggregateError`, retry → an in-flight de-duplicating cache (the core of React Query) |
-| 17 | Components, Props and Lists | JSX, lists and keys, conditional rendering → lifting state, storing ids not objects → derived state instead of synced state |
-| 18 | Forms and Controlled Inputs | Controlled inputs, validation, submit → async pending/error states as one status → editing, dirty tracking, resetting state with `key` |
-| 19 | Effects and Data Fetching | Loading/error/data → race conditions on a changing id → `AbortController`, background polling, cleanup |
-| 20 | Reducers and Custom Hooks | A pure reducer over a discriminated-union action → a custom hook with undo history → `useDebouncedValue` |
-| 21 | Context, Refs and Memo | A provider and a hook that fails loudly outside it → inline rename with focus management → `useMemo` that the tests can count |
+React problems are `.tsx`: you write `import { useState } from "react"` and
+`export default function App` as you would in a real project, **Run** shows
+your app in a **Preview** tab, and the tests use Testing Library's API
+(`screen.getByRole`, `user.click`, `waitFor`...), so they find things the way a
+user would.
+
+| # | Problem | Drills |
+|---|---------|--------|
+| 15a–c | TS Warm-ups 1–3 | Array methods without mutation · unions, `never` exhaustiveness, narrowing · generics, `keyof`, `Pick`/`Partial`/`Omit` |
+| 16a–c | TS Warm-ups 4–6 | Promises in series vs parallel, timeouts · `allSettled`, `AggregateError`, retry · an in-flight de-duplicating cache |
+| 17a–c | React 1–3 | Lists and keys · lifting state, storing ids not objects · derived state instead of synced state |
+| 18a–c | React 4–6 | Controlled forms · async saving as one status value · editing, dirty tracking, resetting state with `key` |
+| 19a–c | React 7–9 | `useEffect` loading/error/data · stale responses on a changing id · `AbortController` and interval cleanup |
+| 20a–c | React 10–12 | A pure reducer · a custom hook with undo · `useDebouncedValue` |
+| 21a–c | React 13–15 | Context with a hook that fails loudly · refs and focus management · `useMemo` |
 
 ### Granola React mocks (45 minutes)
 

@@ -1,0 +1,20 @@
+{
+  "id": "16b-ts-async-errors",
+  "title": "TS Warm-up 5: When Async Things Fail",
+  "domain": "TypeScript refresher",
+  "section": "TypeScript + React refresher",
+  "language": "typescript",
+  "minutes": 10,
+  "skills": [
+    "allSettled",
+    "AggregateError",
+    "retry"
+  ],
+  "stages": [
+    {
+      "n": 1,
+      "name": "When Async Things Fail",
+      "minutes": 10
+    }
+  ]
+}
